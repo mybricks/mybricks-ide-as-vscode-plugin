@@ -14,18 +14,18 @@
 
 MyBricks IDE VSCode 插件将强大的 MyBricks.ai 可视化搭建平台完整集成到 VSCode 开发环境中，让开发者无需离开 IDE 即可进行小程序、H5 页面的可视化开发。本插件基于 MyBricks SPA Designer 引擎，提供完整的组件化搭建、可视化编辑和项目管理能力。
 
-## ✨ MyBricks 平台先进性
+## ✨ MyBricks.ai 平台先进性
 
 ### 🎯 核心优势
 
-**1. 架构灵活性**
-- 提供 aPaaS 平台和独立引擎两种使用方式
-- 支持基于 MyBricks 引擎快速定制专属开发平台
+**1. 强大的AI+无代码能力**
+- 图片直接生成应用、自然语言调整
+- 强大的可视化能力、即时仿真
 - 模块化设计，易于扩展和集成
 
 **2. 多技术栈支持**
 - **多渲染器支持**：React、Vue、小程序（Taro）等多种渲染方案
-- **跨端开发**：一次搭建，多端运行（Web、H5、小程序）
+- **跨端开发**：一次搭建，多端运行（Web、H5、小程序、鸿蒙）
 - **源码生成**：支持将可视化搭建的页面导出为源代码
 
 **3. 组件化生态**
@@ -47,7 +47,7 @@ MyBricks IDE VSCode 插件将强大的 MyBricks.ai 可视化搭建平台完整�
 
 ### 核心功能
 
-- ✅ **IDE 原生集成**：在 VSCode 中直接打开 MyBricks 设计器
+- ✅ **IDE 原生集成**：在 VSCode 中直接打开 MyBricks 设计系统
 - ✅ **小程序开发**：支持小程序标签页、普通页面、对话框、WebView 等场景
 - ✅ **可视化搭建**：拖拽式组件搭建，所见即所得
 - ✅ **实时预览**：移动端尺寸预览（375x667），实时查看效果
@@ -297,12 +297,6 @@ export default function customPlugin(options) {
 ## 📄 开源协议
 
 本项目采用 MIT 协议开源，详见 [LICENSE](LICENSE) 文件。
-
-## 🙏 致谢
-
-- [MyBricks.ai](https://mybricks.world) - 提供强大的可视化开发引擎
-- [Ant Design](https://ant.design) - UI 组件库
-- [VSCode](https://code.visualstudio.com) - 优秀的编辑器平台
 
 ## 📮 联系方式
 
