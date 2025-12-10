@@ -1,0 +1,50 @@
+{
+  "name": "mybricks-webview",
+  "displayName": "MyBricks",
+  "description": "MyBricks SDK integrated in VS Code",
+  "version": "0.0.1",
+  "publisher": "mybricks",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "mybricks.openIDE",
+        "title": "Open MyBricks IDE",
+        "icon": "asserts/icon.svg"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "mybricks-sidebar",
+          "title": "MyBricks",
+          "icon": "asserts/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "mybricks-sidebar": [
+        {
+          "type": "webview",
+          "id": "mybricks.ide",
+          "name": "MyBricks IDE",
+          "visibility": "hidden"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "MyBricks",
+      "properties": {}
+    }
+  }
+}
+
