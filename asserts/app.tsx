@@ -1,37 +1,48 @@
+/**
+ * MyBricks 主应用入口
+ */
 declare const React: any;
 declare const ReactDOM: any;
 
 const { useState, useRef, useMemo, useCallback, useEffect } = React;
 const rootEl = document.getElementById('root');
 
-const { SPADesigner } = (window as any).mybricks//MyBricks SDA引擎
+// MyBricks SPA Designer 引擎
+const { SPADesigner } = (window as any).mybricks
 
-// 从全局变量获取 config 函数（appConfig.tsx 会将其挂载到 window 上）
+// 获取配置函数（由 config.tsx 挂载）
 const configFn = (window as any).config;
 
+// 渲染应用
 if (rootEl) {
     const root = ReactDOM.createRoot(rootEl);
     root.render(<App />);
 }
 
+/**
+ * 主应用组件
+ */
 function App() {
+    // 内容变更计数
     const [changed, setChanged] = useState(0)
 
+    // 消息提示处理
     const onMessage = useCallback((type, msg) => {
         message.destroy()
         message[type](msg)
     }, [])
 
+    // 设计器实例引用
     const designerRef = useRef(null)
 
-    //MyBricks 配置
+    // 初始化配置
     const config = useMemo(() => {
         return configFn({
             designerRef
         })
     }, [])
 
-    //保存文件,目前是暂存在localstorage
+    // 保存到 localStorage
     const save = useCallback((all?) => {
         setChanged(0)
         config.save(all)
@@ -39,23 +50,23 @@ function App() {
 
     return (
         <div className='ide'>
+            {/* 顶部工具栏 */}
             <div className='toolbar'>
                 <div className={'logo'}>MyBricks</div>
                 <div className={'btns'} id={'toolbarBtns'} />
-                <button className={'primary'} onClick={save}>{changed ? '*' : ''}保存</button>
-                {/* <button onClick={preview}>预览</button>
-                <button onClick={publish}>发布</button> */}
+                <button className={'primary'} onClick={save}>
+                    {changed ? '*' : ''}保存
+                </button>
             </div>
+            
+            {/* 设计器主区域 */}
             <div className={'designer'}>
-                <SPADesigner config={config}
+                <SPADesigner 
+                    config={config}
                     ref={designerRef}
-                    onLoad={e => {
-                        console.log('loaded')
-                    }}
+                    onLoad={e => console.log('loaded')}
                     onMessage={onMessage}
-                    onEdit={(...args) => {
-                        setChanged(changed + 1)
-                    }}
+                    onEdit={() => setChanged(changed + 1)}
                 />
             </div>
         </div>

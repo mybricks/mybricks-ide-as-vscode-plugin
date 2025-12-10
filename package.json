@@ -1,7 +1,7 @@
 {
   "name": "mybricks-webview",
-  "displayName": "MyBricks",
-  "description": "MyBricks SDK integrated in VS Code",
+  "displayName": "MyBricks.ai",
+  "description": "MyBricks.ai 可视化开发平台 - VSCode 集成版，支持小程序、H5 页面可视化搭建",
   "version": "0.0.1",
   "publisher": "mybricks",
   "engines": {

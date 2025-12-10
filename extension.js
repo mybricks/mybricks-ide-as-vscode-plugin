@@ -1,26 +1,35 @@
+/**
+ * MyBricks VSCode 插件 - 主入口
+ * 提供 MyBricks.ai 设计器的 VSCode 集成
+ */
 const vscode = require('vscode');
 const { getWebviewContent } = require('./webview');
 
+// 当前面板实例，单例模式
 let currentPanel = undefined;
 
+/**
+ * 插件激活时调用
+ */
 function activate(context) {
     const extensionUri = context.extensionUri;
-    // 注册命令：打开全屏网页
+    
+    // 注册命令：打开 MyBricks 设计器
     const openWebCommand = vscode.commands.registerCommand('mybricks.openIDE', () => {
         if (currentPanel) {
             // 如果面板已存在，显示并更新
             currentPanel.reveal(vscode.ViewColumn.One);
             currentPanel.webview.html = getWebviewContent(currentPanel.webview, extensionUri);
         } else {
-            // 创建新的全屏面板
+            // 创建新面板
             currentPanel = vscode.window.createWebviewPanel(
                 'mybricksWeb',
                 'MyBricks',
                 vscode.ViewColumn.One,
                 {
-                    enableScripts: true,
-                    retainContextWhenHidden: true,
-                    localResourceRoots: [
+                    enableScripts: true,              // 允许运行 JS
+                    retainContextWhenHidden: true,    // 隐藏时保留状态
+                    localResourceRoots: [             // 允许访问的本地资源路径
                         vscode.Uri.joinPath(extensionUri, 'asserts'),
                         extensionUri
                     ]
@@ -29,25 +38,25 @@ function activate(context) {
 
             currentPanel.webview.html = getWebviewContent(currentPanel.webview, extensionUri);
 
-            // 监听来自 webview 的消息
+            // 监听来自 webview 的消息（扩展用于未来的交互）
             currentPanel.webview.onDidReceiveMessage(
                 async message => {
                     switch (message.command) {
-                       
+                        // 可在此处添加自定义消息处理
                     }
                 },
                 undefined,
                 context.subscriptions
             );
 
-            // 面板关闭时清理引用
+            // 面板关闭时清理
             currentPanel.onDidDispose(() => {
                 currentPanel = undefined;
             });
         }
     });
 
-    // 注册侧边栏视图
+    // 注册侧边栏视图提供者
     const provider = {
         resolveWebviewView(webviewView, context, token) {
             webviewView.webview.options = {
@@ -97,10 +106,11 @@ function activate(context) {
 </body>
 </html>`;
 
-            // 监听来自侧边栏的消息
+            // 监听侧边栏消息
             webviewView.webview.onDidReceiveMessage(
                 async message => {
                     switch (message.command) {
+                        // 打开 dump.json 文件
                         case 'openDumpFile':
                             try {
                                 const fs = require('fs');
@@ -160,18 +170,21 @@ function activate(context) {
         }
     };
 
+    // 注册命令和视图
     context.subscriptions.push(openWebCommand);
     context.subscriptions.push(
         vscode.window.registerWebviewViewProvider('mybricks.ide', provider)
     );
 
-    // 扩展激活时自动打开全屏页面
-    // 使用 setTimeout 确保扩展完全初始化后再打开
+    // 启动时自动打开设计器
     setTimeout(() => {
         vscode.commands.executeCommand('mybricks.openIDE');
     }, 100);
 }
 
+/**
+ * 插件停用时调用
+ */
 function deactivate() { }
 
 module.exports = {
