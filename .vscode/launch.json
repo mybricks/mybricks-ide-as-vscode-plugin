@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Run Extension",
+      "name": "运行扩展 (Run Extension)",
       "type": "extensionHost",
       "request": "launch",
       "args": [
@@ -10,6 +10,22 @@
       ],
       "outFiles": [
         "${workspaceFolder}/**/*.js"
+      ],
+      "preLaunchTask": "${defaultBuildTask}",
+      "sourceMaps": true,
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    },
+    {
+      "name": "附加到扩展 (Attach to Extension)",
+      "type": "extensionHost",
+      "request": "attach",
+      "port": 9229,
+      "restart": true,
+      "sourceMaps": true,
+      "skipFiles": [
+        "<node_internals>/**"
       ]
     }
   ]
