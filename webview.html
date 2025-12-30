@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh-CN" class="no-js">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" content="
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
         default-src 'none';
         style-src 'unsafe-inline' https: http: vscode-webview:;
         script-src 'unsafe-inline' 'unsafe-eval' https: http: vscode-webview:;
@@ -12,7 +13,8 @@
         connect-src * https: http: ws: wss: data: blob:;
         worker-src blob:;
         child-src blob:;
-    ">
+    "
+    />
     <title>MyBricks.ai Designer</title>
     <link rel="shortcut icon" href="/favicon.ico" />
 
@@ -29,31 +31,46 @@
     <script src="./asserts/cssinjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.13/dayjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/antd/5.22.7/antd.min.js"></script>
-    <script
-        src="https://f2.eckwai.com/kos/nlav11092/fangzhou/pub/temp/1690444248634.ant-design-icons_4.7.0_min.js"></script>
-
+    <script src="https://f2.eckwai.com/kos/nlav11092/fangzhou/pub/temp/1690444248634.ant-design-icons_4.7.0_min.js"></script>
 
     <!-- MyBricks SDA 引擎-->
     <script src="https://p4-ec.eckwai.com/kos/nlav12333/mybricks/designer-spa/3.9.836/index.min.js"></script>
 
     <!-- MyBricks 服务接口连接器插件-->
     <script src="https://p2-ec.eckwai.com/kos/nlav12333/mybricks/plugin-http-connector/1.2.30/plugin.9a7ecd7bfad260c2.js"></script>
-    
-</head>
 
-<body>
+    <!-- webview 消息 API -->
+    <script src="./asserts/webViewMessageApi.js"></script>
+  </head>
+
+  <body>
     <div id="root"></div>
 
     <script>
-        // 监听来自扩展的消息
-        window.addEventListener('message', event => {
-            const message = event.data;
-           
-        });
+      // 监听来自扩展的消息
+      window.addEventListener('message', (event) => {
+        const message = event.data
+      })
+
+      // VS Code API 对象
+      const vscode = acquireVsCodeApi()
+      window.vscode = vscode
+      // 初始化 WebView 消息 API
+      const webViewMessageApi = new WebViewMessageAPI(vscode)
+      window.webViewMessageApi = webViewMessageApi
     </script>
 
-    <script type="text/babel" data-type="module" data-presets="react,typescript" src="./asserts/config.tsx"></script>
-    <script type="text/babel" data-type="module" data-presets="react,typescript" src="./asserts/app.tsx"></script>
-</body>
-
+    <script
+      type="text/babel"
+      data-type="module"
+      data-presets="react,typescript"
+      src="./asserts/config.tsx"
+    ></script>
+    <script
+      type="text/babel"
+      data-type="module"
+      data-presets="react,typescript"
+      src="./asserts/app.tsx"
+    ></script>
+  </body>
 </html>
