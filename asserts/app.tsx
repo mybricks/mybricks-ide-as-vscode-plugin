@@ -4,7 +4,7 @@
 declare const React: any
 declare const ReactDOM: any
 
-const { useState, useRef, useMemo, useCallback, useEffect } = React
+const { useState, useRef, useMemo, useCallback } = React
 const rootEl = document.getElementById('root')
 
 const STORAGE_KEY_EXPORT = '--mybricks-export-config-'
@@ -19,7 +19,7 @@ const { SPADesigner } = (window as any).mybricks
 // 获取配置函数（由 config.tsx 挂载）
 const configFn = (window as any).config
 
-const { Popover, Form, Input, Button } = (window as any).antd
+const { Popover, Form, Input, Button, message } = (window as any).antd
 const { VerticalAlignBottomOutlined } = (window as any).icons
 
 const vsCodeMessage = (window as any).webViewMessageApi
@@ -41,9 +41,9 @@ function App() {
   const [exportPopoverVisible, setExportPopoverVisible] = useState(false)
 
   // 消息提示处理
-  const onMessage = useCallback((type, msg) => {
+  const onMessage = useCallback((type, msg, duration = 3) => {
     message.destroy()
-    message[type](msg)
+    message[type](msg, duration)
   }, [])
 
   // 设计器实例引用
@@ -64,7 +64,9 @@ function App() {
   }, [])
 
   // 导出
-  const handleExport = useCallback((isZip: boolean, values: ExportConfig) => {
+  const handleExport = useCallback((toZip: boolean, values: ExportConfig) => {
+    setExportPopoverVisible(false)
+    onMessage('loading', '导出中...', 0)
     const configJson = designerRef.current.toJSON({
       withDiagrams: true,
       withIOSchema: true,
@@ -73,10 +75,15 @@ function App() {
       .call('export', {
         configJson,
         ...values,
-        isZip,
+        toZip,
       })
       .then((res) => {
         console.log('>>>>>下载完成', res)
+        if (res.success) {
+          onMessage('success', res.message)
+        } else {
+          onMessage('error', res.message)
+        }
       })
   }, [])
 
@@ -125,7 +132,7 @@ function App() {
 
 function ExportContent(Iprops: {
   onClose: () => void
-  onExport: (isZip: boolean, values: ExportConfig) => void
+  onExport: (toZip: boolean, values: ExportConfig) => void
 }) {
   const { onClose, onExport } = Iprops
   const defaultValues = Object.assign(
@@ -154,8 +161,8 @@ function ExportContent(Iprops: {
   }
 
   const handleExport = useCallback(
-    (isZip: boolean) => {
-      onExport(isZip, formValues)
+    (toZip: boolean) => {
+      onExport(toZip, formValues)
     },
     [onExport, formValues]
   )

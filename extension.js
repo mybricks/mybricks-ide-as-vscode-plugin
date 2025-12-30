@@ -54,11 +54,25 @@ function activate(context) {
         const messageApiInstance = new messageApi(currentPanel)
 
         messageApiInstance.registerHandler('export', async (data) => {
-          const { projectName, exportDir, configJson, isZip } = data
-          // const taroProjectJson = generateTaroProjectJson(data)
-          // generateTaroProject(testData)
-          return {
-            message: '下载完成',
+          const { projectName, exportDir, configJson, toZip } = data
+          // const projectJson = generateTaroProjectJson(configJson)
+          const projectJson = testData
+          try {
+            await generateTaroProject({
+              projectName,
+              exportDir,
+              projectJson,
+              toZip,
+            })
+            return {
+              success: true,
+              message: '导出成功',
+            }
+          } catch (error) {
+            return {
+              success: false,
+              message: error,
+            }
           }
         })
 
