@@ -7,11 +7,20 @@ declare const ReactDOM: any
 const { useState, useRef, useMemo, useCallback, useEffect } = React
 const rootEl = document.getElementById('root')
 
+const STORAGE_KEY_EXPORT = '--mybricks-export-config-'
+type ExportConfig = {
+  projectName: string
+  exportDir?: string
+}
+
 // MyBricks SPA Designer 引擎
 const { SPADesigner } = (window as any).mybricks
 
 // 获取配置函数（由 config.tsx 挂载）
 const configFn = (window as any).config
+
+const { Popover, Form, Input, Button } = (window as any).antd
+const { VerticalAlignBottomOutlined } = (window as any).icons
 
 const vsCodeMessage = (window as any).webViewMessageApi
 
@@ -27,6 +36,9 @@ if (rootEl) {
 function App() {
   // 内容变更计数
   const [changed, setChanged] = useState(0)
+
+  // 下载弹出层显隐
+  const [exportPopoverVisible, setExportPopoverVisible] = useState(false)
 
   // 消息提示处理
   const onMessage = useCallback((type, msg) => {
@@ -51,15 +63,21 @@ function App() {
     config.save(all)
   }, [])
 
-  // 下载
-  const download = useCallback(() => {
-    const resJson = designerRef.current.toJSON({
+  // 导出
+  const handleExport = useCallback((isZip: boolean, values: ExportConfig) => {
+    const configJson = designerRef.current.toJSON({
       withDiagrams: true,
       withIOSchema: true,
     })
-    vsCodeMessage.call('download', resJson).then((res) => {
-      console.log('>>>>>下载完成', res)
-    })
+    vsCodeMessage
+      .call('export', {
+        configJson,
+        ...values,
+        isZip,
+      })
+      .then((res) => {
+        console.log('>>>>>下载完成', res)
+      })
   }, [])
 
   return (
@@ -72,9 +90,22 @@ function App() {
           <button className={'primary'} onClick={save}>
             {changed ? '*' : ''}保存
           </button>
-          <button className={'primary'} onClick={download}>
-            下载
-          </button>
+          <Popover
+            title='导出应用的源代码'
+            open={exportPopoverVisible}
+            onOpenChange={setExportPopoverVisible}
+            trigger='click'
+            placement='bottomRight'
+            arrow={false}
+            content={
+              <ExportContent
+                onExport={handleExport}
+                onClose={() => setExportPopoverVisible(false)}
+              />
+            }
+          >
+            <VerticalAlignBottomOutlined />
+          </Popover>
         </div>
       </div>
 
@@ -88,6 +119,133 @@ function App() {
           onEdit={() => setChanged(changed + 1)}
         />
       </div>
+    </div>
+  )
+}
+
+function ExportContent(Iprops: {
+  onClose: () => void
+  onExport: (isZip: boolean, values: ExportConfig) => void
+}) {
+  const { onClose, onExport } = Iprops
+  const defaultValues = Object.assign(
+    {
+      projectName: 'my_project',
+    },
+    JSON.parse(localStorage.getItem(STORAGE_KEY_EXPORT) || '{}')
+  ) as ExportConfig
+
+  const [form] = Form.useForm()
+  const [formValues, setFormValues] = useState(defaultValues)
+
+  const onSelectDir = () => {
+    vsCodeMessage.call('selectExportDir').then((res) => {
+      if (res?.path) {
+        const dir = res.path
+        form.setFieldValue('exportDir', dir)
+        save('exportDir', dir)
+      }
+    })
+  }
+
+  const onClearDir = () => {
+    form.setFieldValue('exportDir', '')
+    save('exportDir', '')
+  }
+
+  const handleExport = useCallback(
+    (isZip: boolean) => {
+      onExport(isZip, formValues)
+    },
+    [onExport, formValues]
+  )
+
+  const save = useCallback(
+    (key: keyof ExportConfig, value: ExportConfig[keyof ExportConfig]) => {
+      console.log(value)
+      const exportConfig = { ...formValues, [key]: value }
+      setFormValues(exportConfig)
+      localStorage.setItem(STORAGE_KEY_EXPORT, JSON.stringify(exportConfig))
+    },
+    [formValues]
+  )
+
+  return (
+    <div>
+      <Form
+        form={form}
+        layout='vertical'
+        size='small'
+        initialValues={defaultValues}
+      >
+        <Form.Item
+          label='应用名称'
+          name='projectName'
+          rules={[
+            {
+              validator: (_, value: string) =>
+                /^[a-zA-Z][a-zA-Z0-9_]*$/.test(value)
+                  ? Promise.resolve()
+                  : Promise.reject(
+                      new Error('以字母开头，仅支持字母、数字以及下划线')
+                    ),
+            },
+          ]}
+        >
+          <Input
+            placeholder='请输入应用名称'
+            onBlur={() => {
+              form
+                .validateFields(['projectName'])
+                .then((values: ExportConfig) => {
+                  save('projectName', values.projectName)
+                })
+            }}
+          />
+        </Form.Item>
+        <Form.Item label='应用导出目录' name='exportDir'>
+          {form.getFieldValue('exportDir') ? (
+            <div>
+              <span>{form.getFieldValue('exportDir')}</span>
+              <Button onClick={onClearDir}>重置</Button>
+            </div>
+          ) : (
+            <Button type='primary' onClick={onSelectDir}>
+              配置目录
+            </Button>
+          )}
+        </Form.Item>
+
+        <Form.Item shouldUpdate>
+          {() => (
+            <div>
+              <Button onClick={onClose}>取消</Button>
+              {!!form.getFieldValue('exportDir') && (
+                <Button
+                  type='primary'
+                  disabled={
+                    form.getFieldsError().filter(({ errors }) => errors.length)
+                      .length
+                  }
+                  onClick={() => handleExport(false)}
+                >
+                  同步应用
+                </Button>
+              )}
+              <Button
+                type='primary'
+                disabled={
+                  form.getFieldsError().filter(({ errors }) => errors.length)
+                    .length
+                }
+                onClick={() => handleExport(true)}
+              >
+                导出应用
+              </Button>
+            </div>
+          )}
+        </Form.Item>
+      </Form>
     </div>
   )
 }

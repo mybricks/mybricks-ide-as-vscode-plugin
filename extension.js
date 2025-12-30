@@ -5,6 +5,8 @@
 const vscode = require('vscode')
 const { getWebviewContent } = require('./webview')
 const messageApi = require('./utils/messageApi')
+const generateTaroProject = require('./utils/generateTaroProject')
+const testData = require('./test/taro-project.json')
 
 // 当前面板实例，单例模式
 let currentPanel = undefined
@@ -50,19 +52,46 @@ function activate(context) {
 
         // 监听来自 webview 的消息（扩展用于未来的交互）
         const messageApiInstance = new messageApi(currentPanel)
-        messageApiInstance.registerHandler('download', async (data) => {
+
+        messageApiInstance.registerHandler('export', async (data) => {
+          const { projectName, exportDir, configJson, isZip } = data
+          // const taroProjectJson = generateTaroProjectJson(data)
+          // generateTaroProject(testData)
           return {
             message: '下载完成',
+          }
+        })
+
+        // 选择导出目录
+        messageApiInstance.registerHandler('selectExportDir', async (data) => {
+          let defaultUri
+          const workspaceFolders = vscode.workspace.workspaceFolders
+          console.log(workspaceFolders)
+          if (workspaceFolders && workspaceFolders.length > 0) {
+            defaultUri = workspaceFolders[0].uri
+          }
+          const result = await vscode.window.showOpenDialog({
+            canSelectFiles: false,
+            canSelectFolders: true,
+            canSelectMany: false,
+            defaultUri,
+            openLabel: '选择',
+            title: '选择要保存应用的文件夹',
+          })
+          if (result && result.length > 0) {
+            this.selectedFolder = result[0].fsPath
+            return {
+              path: selectedFolder,
+            }
+          }
+          return {
+            message: '取消选择',
           }
         })
         // currentPanel.webview.onDidReceiveMessage(
         //   async (message) => {
         //     switch (message.command) {
         //       // 可在此处添加自定义消息处理
-        //       case 'download':
-        //         // 处理下载
-        //         console.log('下载请求:', message)
-        //         break
         //     }
         //   },
         //   undefined,

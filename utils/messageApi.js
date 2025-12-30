@@ -9,7 +9,6 @@ class MessageAPI {
     this.panel.webview.onDidReceiveMessage(
       async (messageStr) => {
         const message = JSON.parse(messageStr || '{}')
-        console.log('[VSCodeAPI] 收到消息:', message)
         if (message.type === 'request') {
           // 处理 webview 的请求
           await this.handleRequest(message)
@@ -90,7 +89,7 @@ class MessageAPI {
           this.pendingCallbacks.delete(id)
           reject(new Error(`调用 webview 方法 "${method}" 超时`))
         }
-      }, 30000)
+      }, 2000)
 
       // 存储超时ID以便清理
       const callback = this.pendingCallbacks.get(id)
