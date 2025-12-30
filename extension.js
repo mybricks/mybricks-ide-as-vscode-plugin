@@ -3,6 +3,7 @@
  * 提供 MyBricks.ai 设计器的 VSCode 集成
  */
 const vscode = require('vscode')
+const path = require('path')
 const { getWebviewContent } = require('./webview')
 const messageApi = require('./utils/messageApi')
 const generateTaroProject = require('./utils/generateTaroProject')
@@ -80,10 +81,25 @@ function activate(context) {
         messageApiInstance.registerHandler('selectExportDir', async (data) => {
           let defaultUri
           const workspaceFolders = vscode.workspace.workspaceFolders
-          console.log(workspaceFolders)
+
           if (workspaceFolders && workspaceFolders.length > 0) {
+            // 优先使用当前工作区目录
             defaultUri = workspaceFolders[0].uri
+          } else if (vscode.window.activeTextEditor) {
+            // 如果没有打开文件夹，尝试使用当前编辑文件的目录
+            const activeUri = vscode.window.activeTextEditor.document.uri
+            if (activeUri.scheme === 'file') {
+              defaultUri = vscode.Uri.file(path.dirname(activeUri.fsPath))
+            }
           }
+
+          // 如果以上都获取不到，使用插件根目录作为兜底
+          if (!defaultUri) {
+            defaultUri = extensionUri
+          }
+
+          console.log('defaultUri', defaultUri)
+
           const result = await vscode.window.showOpenDialog({
             canSelectFiles: false,
             canSelectFolders: true,
@@ -93,7 +109,7 @@ function activate(context) {
             title: '选择要保存应用的文件夹',
           })
           if (result && result.length > 0) {
-            this.selectedFolder = result[0].fsPath
+            const selectedFolder = result[0].fsPath
             return {
               path: selectedFolder,
             }

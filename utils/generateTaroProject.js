@@ -51,7 +51,7 @@ const generateTaroProject = (opts) => {
         handleReject('projectJson 必须是数组')
       }
       const finalExportDir = exportDir || path.join(__dirname, '../_output')
-      const finalProjectName = projectName || 'project'
+      const finalProjectName = projectName || 'my_project'
       const finalToZip = !!toZip
       if (!finalExportDir || !finalProjectName) {
         handleReject('exportDir 与 projectName 必填')

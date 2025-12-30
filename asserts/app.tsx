@@ -144,6 +144,7 @@ function ExportContent(Iprops: {
 
   const [form] = Form.useForm()
   const [formValues, setFormValues] = useState(defaultValues)
+  const exportDir = Form.useWatch('exportDir', form)
 
   const onSelectDir = () => {
     vsCodeMessage.call('selectExportDir').then((res) => {
@@ -210,10 +211,12 @@ function ExportContent(Iprops: {
             }}
           />
         </Form.Item>
-        <Form.Item label='应用导出目录' name='exportDir'>
-          {form.getFieldValue('exportDir') ? (
+        <Form.Item label='应用导出目录' name='exportDir' shouldUpdate>
+          {exportDir ? (
             <div>
-              <span>{form.getFieldValue('exportDir')}</span>
+              <span title={exportDir} style={{ marginRight: 8 }}>
+                {exportDir.split(/[\\/]/).pop()}
+              </span>
               <Button onClick={onClearDir}>重置</Button>
             </div>
           ) : (
@@ -227,18 +230,16 @@ function ExportContent(Iprops: {
           {() => (
             <div>
               <Button onClick={onClose}>取消</Button>
-              {!!form.getFieldValue('exportDir') && (
-                <Button
-                  type='primary'
-                  disabled={
-                    form.getFieldsError().filter(({ errors }) => errors.length)
-                      .length
-                  }
-                  onClick={() => handleExport(false)}
-                >
-                  同步应用
-                </Button>
-              )}
+              <Button
+                type='primary'
+                disabled={
+                  form.getFieldsError().filter(({ errors }) => errors.length)
+                    .length
+                }
+                onClick={() => handleExport(false)}
+              >
+                同步应用
+              </Button>
               <Button
                 type='primary'
                 disabled={
