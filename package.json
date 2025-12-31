@@ -49,6 +49,8 @@
       "title": "MyBricks",
       "properties": {}
     }
+  },
+  "dependencies": {
+    "@mybricks/to-code-taro": "^1.0.1"
   }
 }
-
