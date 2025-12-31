@@ -8,6 +8,7 @@ import { getWebviewContent } from './webview.js'
 import messageApi from './utils/messageApi.js'
 import generateTaroProject from './utils/generateTaroProject.js'
 import testData from './test/taro-project.js'
+// import { generateTaroProjectJson } from '@mybricks/to-code-taro'
 
 // 当前面板实例，单例模式
 let currentPanel = undefined
