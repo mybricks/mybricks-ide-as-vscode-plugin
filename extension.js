@@ -7,8 +7,11 @@ const path = require('path')
 const { getWebviewContent } = require('./webview')
 const messageApi = require('./utils/messageApi')
 const generateTaroProject = require('./utils/generateTaroProject')
-const testData = require('./test/taro-project.json')
-const { generateTaroProjectJson } = require('@mybricks/to-code-taro')
+const {
+  toCodeTaro,
+  generateTaroProjectJson,
+} = require('@mybricks/to-code-taro')
+const taroConfig = require('./utils/taroConfig')
 
 // 当前面板实例，单例模式
 let currentPanel = undefined
@@ -58,10 +61,11 @@ function activate(context) {
         messageApiInstance.registerHandler('export', async (data) => {
           const { projectName, exportDir, configJson, toZip } = data
           try {
-            console.log('>>>>传给generateTaroProjectJson的数据：', configJson)
-            const projectJson = generateTaroProjectJson(configJson)
+            const projectJson = generateTaroProjectJson(
+              toCodeTaro(configJson, taroConfig)
+            )
+
             console.log('projectJson', projectJson)
-            // const projectJson = testData
             await generateTaroProject({
               projectName,
               exportDir,
