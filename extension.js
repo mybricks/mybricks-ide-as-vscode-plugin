@@ -2,12 +2,12 @@
  * MyBricks VSCode 插件 - 主入口
  * 提供 MyBricks.ai 设计器的 VSCode 集成
  */
-const vscode = require('vscode')
-const path = require('path')
-const { getWebviewContent } = require('./webview')
-const messageApi = require('./utils/messageApi')
-const generateTaroProject = require('./utils/generateTaroProject')
-const testData = require('./test/taro-project.json')
+import * as vscode from 'vscode'
+import * as path from 'path'
+import { getWebviewContent } from './webview.js'
+import messageApi from './utils/messageApi.js'
+import generateTaroProject from './utils/generateTaroProject.js'
+import testData from './test/taro-project.js'
 
 // 当前面板实例，单例模式
 let currentPanel = undefined
@@ -15,7 +15,7 @@ let currentPanel = undefined
 /**
  * 插件激活时调用
  */
-function activate(context) {
+export async function activate(context) {
   const extensionUri = context.extensionUri
 
   // 注册命令：打开 MyBricks 设计器
@@ -265,9 +265,4 @@ function activate(context) {
 /**
  * 插件停用时调用
  */
-function deactivate() {}
-
-module.exports = {
-  activate,
-  deactivate,
-}
+export function deactivate() {}

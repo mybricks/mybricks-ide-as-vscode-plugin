@@ -227,4 +227,4 @@ class MessageAPI {
   }
 }
 
-module.exports = MessageAPI
+export default MessageAPI

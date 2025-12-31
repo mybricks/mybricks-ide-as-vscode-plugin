@@ -1,6 +1,11 @@
-const fs = require('fs')
-const path = require('path')
-const { spawnSync } = require('child_process')
+import * as fs from 'fs'
+import * as path from 'path'
+import { spawnSync } from 'child_process'
+import { fileURLToPath } from 'url'
+
+// 获取当前文件目录
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const generateTaroProject = (opts) => {
   const { projectJson, exportDir, projectName, toZip } = opts || {}
@@ -119,5 +124,4 @@ const generateTaroProject = (opts) => {
   })
 }
 
-module.exports = generateTaroProject
-module.exports.default = generateTaroProject
+export default generateTaroProject

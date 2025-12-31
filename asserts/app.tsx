@@ -233,6 +233,7 @@ function ExportContent(Iprops: {
               <Button
                 type='primary'
                 disabled={
+                  !exportDir ||
                   form.getFieldsError().filter(({ errors }) => errors.length)
                     .length
                 }
@@ -243,6 +244,7 @@ function ExportContent(Iprops: {
               <Button
                 type='primary'
                 disabled={
+                  !exportDir ||
                   form.getFieldsError().filter(({ errors }) => errors.length)
                     .length
                 }
