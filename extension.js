@@ -184,6 +184,8 @@ function activate(context) {
                   height: 30px;
                   background: #d1d3db;
                   cursor: pointer;
+                  color: #000;
+                  border-radius: 4px;
                 }
                 .btn:hover {
                   background: #edeff2;
