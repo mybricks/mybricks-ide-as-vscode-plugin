@@ -18,6 +18,9 @@ function config({ designerRef }) {
   const cachedContent = localStorage.getItem(STORAGE_KEY)
   const fileContent = cachedContent ? JSON.parse(cachedContent) : null
 
+  // tabbar
+  ;(window as any).tabbarModel.initFromFileContent(fileContent)
+
   return {
     version: new Date().getTime(), // 版本号
     type: 'mpa', // 多页应用模式
@@ -62,6 +65,8 @@ function config({ designerRef }) {
           return
         }
 
+        console.log('dumpedJson', dumpedJson)
+
         // 提取导出数据
         const {
           pageAry, // 页面列表
@@ -99,6 +104,10 @@ function config({ designerRef }) {
             }
           })
         }
+
+        // tabbar
+        const tabbar = (window as any).__tabbar__.get()
+        saveContent.tabbar = tabbar
 
         // 持久化到 localStorage
         localStorage.setItem(STORAGE_KEY, JSON.stringify(saveContent))

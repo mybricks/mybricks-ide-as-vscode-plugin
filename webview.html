@@ -41,6 +41,9 @@
 
     <!-- webview 消息 API -->
     <script src="./asserts/webViewMessageApi.js"></script>
+
+    <!-- tabbar -->
+    <script src="./asserts/store/tabbar.js"></script>
   </head>
 
   <body>
@@ -55,6 +58,7 @@
       // VS Code API 对象
       const vscode = acquireVsCodeApi()
       window.VS_CODE = vscode
+
       // 初始化 WebView 消息 API
       const webViewMessageApi = new WebViewMessageAPI(VS_CODE)
       window.webViewMessageApi = webViewMessageApi

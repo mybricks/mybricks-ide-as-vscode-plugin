@@ -15,7 +15,6 @@ type ExportConfig = {
 
 // MyBricks SPA Designer 引擎
 const { SPADesigner } = (window as any).mybricks
-console.log(window)
 
 // 获取配置函数（由 config.tsx 挂载）
 const configFn = (window as any).config
@@ -90,6 +89,7 @@ function App() {
       withDiagrams: true,
       withIOSchema: true,
     })
+    console.log('configJson', configJson)
     vsCodeMessage
       .call('export', {
         configJson,
