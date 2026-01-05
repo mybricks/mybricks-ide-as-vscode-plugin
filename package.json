@@ -51,6 +51,6 @@
     }
   },
   "dependencies": {
-    "@mybricks/to-code-taro": "^1.0.2"
+    "@mybricks/to-code-taro": "^1.0.3"
   }
 }

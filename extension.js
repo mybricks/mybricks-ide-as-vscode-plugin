@@ -166,7 +166,7 @@ function activate(context) {
                     flex-direction: column;
                     align-items: center;
                     margin: 0;
-                    padding: 20px;
+                    padding: 10px;
                     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
                     background: var(--vscode-sideBar-background);
                     color: var(--vscode-sideBar-foreground);
@@ -177,18 +177,32 @@ function activate(context) {
                     gap: 10px;
                     width: 100%;
                 }
-                .welcome {
-                    font-size: 12px;
-                    text-align: center;
+                .btn {
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  height: 30px;
+                  background: #d1d3db;
+                  cursor: pointer;
+                }
+                .btn:hover {
+                  background: #edeff2;
                 }
             </style>
         </head>
         <body>
             <div class="container">
-                <div class="welcome">欢迎使用MyBricks</div>
+                <span class="btn" onclick="openIDE()">打开 MyBricks IDE</span>
             </div>
             <script>
+                const vscode = acquireVsCodeApi()
+                window.VS_CODE = vscode
 
+                function openIDE() {
+                  window.VS_CODE.postMessage({
+                    command: 'openIDE',
+                  })
+                }
             </script>
         </body>
       </html>`
@@ -197,57 +211,9 @@ function activate(context) {
       webviewView.webview.onDidReceiveMessage(
         async (message) => {
           switch (message.command) {
-            // 打开 dump.json 文件
-            case 'openDumpFile':
-              try {
-                const fs = require('fs')
-                const path = require('path')
-
-                // 确定默认打开路径
-                let defaultUri
-                const workspaceFolders = vscode.workspace.workspaceFolders
-                if (workspaceFolders && workspaceFolders.length > 0) {
-                  defaultUri = workspaceFolders[0].uri
-                } else {
-                  const homeDir = require('os').homedir()
-                  defaultUri = vscode.Uri.file(homeDir)
-                }
-
-                // 弹出文件选择对话框
-                const fileUris = await vscode.window.showOpenDialog({
-                  defaultUri: defaultUri,
-                  canSelectMany: false,
-                  filters: {
-                    'Dump JSON 文件': ['dump.json', 'json'],
-                    所有文件: ['*'],
-                  },
-                  openLabel: '打开',
-                })
-
-                if (!fileUris || fileUris.length === 0) {
-                  return
-                }
-
-                // 读取文件内容
-                const fileContent = fs.readFileSync(fileUris[0].fsPath, 'utf8')
-                const fileName = path.basename(fileUris[0].fsPath)
-
-                // 打开主面板并加载内容
-                vscode.commands.executeCommand('mybricks.openIDE')
-
-                // 等待主面板加载
-                setTimeout(() => {
-                  if (currentPanel) {
-                    currentPanel.webview.postMessage({
-                      command: 'loadDump',
-                      fileName: fileName,
-                      content: fileContent,
-                    })
-                  }
-                }, 500)
-              } catch (error) {
-                vscode.window.showErrorMessage(`打开文件失败: ${error.message}`)
-              }
+            // 打开 MyBricks IDE
+            case 'openIDE':
+              vscode.commands.executeCommand('mybricks.openIDE')
               break
           }
         },
