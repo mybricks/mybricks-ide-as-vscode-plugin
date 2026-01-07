@@ -1,5 +1,18 @@
 @charset "utf-8";
 
+@font-face {
+  font-display: auto;
+  font-family: 'vant-icon';
+  font-style: normal;
+  font-weight: normal;
+  src: url('https://at.alicdn.com/t/font_2553510_61agzg96wm8.woff2?t=1631948257467')
+      format('woff2'),
+    url('https://at.alicdn.com/t/font_2553510_61agzg96wm8.woff?t=1631948257467')
+      format('woff'),
+    url('https://at.alicdn.com/t/font_2553510_61agzg96wm8.ttf?t=1631948257467')
+      format('truetype');
+}
+
 html,
 body {
   height: 100%;
