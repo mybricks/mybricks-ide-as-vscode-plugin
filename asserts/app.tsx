@@ -97,11 +97,14 @@ function App() {
         toZip,
       })
       .then((res) => {
-        console.log('>>>>>下载完成', res)
+        console.log('>>>>>导出结果', res)
         if (res.success) {
           onMessage('success', res.message)
         } else {
-          onMessage('error', res.message)
+          onMessage(
+            'error',
+            typeof res.message === 'string' ? res.message : '导出失败'
+          )
         }
       })
   }, [])

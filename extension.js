@@ -77,6 +77,7 @@ function activate(context) {
               message: '导出成功',
             }
           } catch (error) {
+            console.error('导出失败', error)
             return {
               success: false,
               message: error,

@@ -1,3 +1,23 @@
+function convertNamespaceToComponentName(namespace) {
+  return namespace
+    .split('.')
+    .map((part, index) => {
+      // 第一部分（mybricks）保持小写
+      if (index === 0) {
+        return part.toLowerCase()
+      }
+      // 其他部分：去掉下划线前缀，将连字符后的字母转为大写（驼峰命名）
+      let result = part.replace(/^_/, '')
+      result = result.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())
+      return result
+    })
+    .join('_')
+}
+
+function convertNamespaceToImportName(namespace) {
+  return convertNamespaceToComponentName(namespace)
+}
+
 module.exports = {
   getComponentMeta: (com, configMeta) => {
     // 根据组件的 namespace 返回对应的元数据
