@@ -233,6 +233,7 @@ function config({ designerRef }) {
       theme: {
         css: [
           'https://my.mybricks.world/mybricks-app-mpsite/public/brickd-mobile/0.0.53/index.css',
+          'https://my.mybricks.world/mybricks-app-mpsite/public/edit-reset.css',
         ],
       },
     },
