@@ -1,6 +1,6 @@
 class Tabbar {
   initFromFileContent = (fileContent) => {
-    let tabbar = fileContent.tabbar || []
+    let tabbar = (fileContent && fileContent.tabbar) || []
     console.log('tabbar初始化', tabbar)
 
     // 事件监听列表
