@@ -83,6 +83,7 @@ function config({ designerRef }) {
           saveContent = {
             project: { projectContent },
             pages: [],
+            extra: {},
           }
         } else {
           saveContent.project.projectContent = projectContent
@@ -105,9 +106,10 @@ function config({ designerRef }) {
           })
         }
 
+        if (!saveContent.extra) saveContent.extra = {}
         // tabbar
         const tabbar = (window as any).__tabbar__.get()
-        saveContent.tabbar = tabbar
+        saveContent.extra.tabbar = tabbar
 
         // 持久化到 localStorage
         localStorage.setItem(STORAGE_KEY, JSON.stringify(saveContent))
