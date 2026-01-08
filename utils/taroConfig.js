@@ -43,7 +43,12 @@ module.exports = {
     }
 
     // 普通组件：从 namespace 中提取组件名（取最后一部分）
-    const componentName = namespace.split('.').pop() || 'Component'
+    const componentName =
+      namespace
+        .split('.')
+        .pop()
+        ?.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase()) ||
+      'Component'
 
     // 创建组件元数据对象
     const createMeta = (name) => ({
