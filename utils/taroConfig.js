@@ -19,17 +19,11 @@ function convertNamespaceToImportName(namespace) {
 }
 
 module.exports = {
-  getComponentMeta: (com, configMeta) => {
-    // 根据组件的 namespace 返回对应的元数据
-    const namespace = com.def?.namespace || ''
-    const rtType = com.def?.rtType || ''
+  getComponentMeta: (com) => {
+    const { namespace = '' } = com.def || {}
 
-    // JS 类型组件（_showToast、_scan-qrcode、_setStorage 等）
-    const isJsComponent = rtType?.match(/^js/gi)
-    const isJsApiComponent = namespace.startsWith('mybricks.taro._')
-
-    if (isJsApiComponent) {
-      // 转换为导入名：mybricks.taro._showToast -> mybricks_taro__showToast
+    // JS API 组件（以 _ 开头，如 _showToast）
+    if (namespace.startsWith('mybricks.taro._')) {
       const importName = convertNamespaceToImportName(namespace)
       return {
         importInfo: {
@@ -42,29 +36,24 @@ module.exports = {
       }
     }
 
-    // 普通组件：从 namespace 中提取组件名（取最后一部分）
+    // 普通组件：从 namespace 中提取组件名
     const componentName =
       namespace
         .split('.')
         .pop()
         ?.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase()) ||
       'Component'
-
-    // 创建组件元数据对象
-    const createMeta = (name) => ({
+    return {
       importInfo: {
-        name,
+        name: componentName,
         from: '../../components',
         type: 'named',
       },
-      name,
-      callName: name,
-    })
-
-    // 以下划线开头的组件（如 _muilt-inputJs）在 handleProcess 中会有特殊处理
-    return createMeta(componentName)
+      name: componentName,
+      callName: componentName,
+    }
   },
-  getComponentPackageName: () => '../../core/utils/ComContext',
+  getComponentPackageName: () => '../../core/utils/index',
   getUtilsPackageName: () => '../../core/utils/index',
   getPageId: (id) => id,
   getModuleApi: () => ({
@@ -75,7 +64,5 @@ module.exports = {
     },
     componentName: 'api',
   }),
-  codeStyle: {
-    indent: 2,
-  },
+  codeStyle: { indent: 2 },
 }
