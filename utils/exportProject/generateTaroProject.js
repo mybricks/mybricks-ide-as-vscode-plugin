@@ -2,8 +2,10 @@ const fs = require('fs')
 const path = require('path')
 const { spawnSync } = require('child_process')
 
+const ZIP_NAME = 'dist'
+
 const generateTaroProject = (opts) => {
-  const { projectJson, exportDir, projectName, toZip } = opts || {}
+  const { projectJson, exportDir, toZip } = opts || {}
 
   const processNode = (node, baseDir) => {
     const nodePath = path.join(baseDir, node.path)
@@ -51,32 +53,29 @@ const generateTaroProject = (opts) => {
         handleReject('projectJson 必须是数组')
       }
       const finalExportDir = exportDir
-      const finalProjectName = projectName || 'my_project'
       const finalToZip = !!toZip
-      if (!finalExportDir || !finalProjectName) {
-        handleReject('exportDir 与 projectName 必填')
+      if (!finalExportDir) {
+        handleReject('exportDir 必填')
       }
 
-      const targetDir = path.join(finalExportDir, finalProjectName)
       const tempDir = finalToZip
-        ? path.join(finalExportDir, `.${finalProjectName}.tmp`)
-        : targetDir
+        ? path.join(finalExportDir, `.${ZIP_NAME}.tmp`)
+        : finalExportDir
 
-      if (fs.existsSync(tempDir)) {
-        fs.rmSync(tempDir, { recursive: true, force: true })
+      if (!fs.existsSync(tempDir)) {
+        fs.mkdirSync(tempDir, { recursive: true })
       }
-      fs.mkdirSync(tempDir, { recursive: true })
 
       projectJson.forEach((node) => {
         processNode(node, tempDir)
       })
 
       if (!finalToZip) {
-        resolve({ dir: targetDir })
+        resolve({ dir: tempDir })
         return
       }
 
-      const zipPath = path.join(finalExportDir, `${finalProjectName}.zip`)
+      const zipPath = path.join(finalExportDir, `${ZIP_NAME}.zip`)
       if (fs.existsSync(zipPath)) {
         fs.rmSync(zipPath, { force: true })
       }
@@ -112,7 +111,7 @@ const generateTaroProject = (opts) => {
       }
 
       fs.rmSync(tempDir, { recursive: true, force: true })
-      resolve({ zipPath })
+      resolve({ dir: zipPath })
     } catch (err) {
       handleReject(err)
     }

@@ -3,16 +3,10 @@
  * 提供 MyBricks.ai 设计器的 VSCode 集成
  */
 const vscode = require('vscode')
-const path = require('path')
 const { getWebviewContent } = require('./webview')
 const messageApi = require('./utils/messageApi')
-const generateTaroProject = require('./utils/generateTaroProject')
-const { getWorkspaceFolder, saveProject } = require('./utils/saveProject')
-const {
-  toCodeTaro,
-  generateTaroProjectJson,
-} = require('@mybricks/to-code-taro')
-const taroConfig = require('./utils/taroConfig')
+const { getFileContent, saveFileContent } = require('./utils/saveProject')
+const { exportProject } = require('./utils/exportProject')
 
 // 当前面板实例，单例模式
 let currentPanel = undefined
@@ -59,68 +53,22 @@ function activate(context) {
         // 监听来自 webview 的消息（扩展用于未来的交互）
         const messageApiInstance = new messageApi(currentPanel)
 
-        // 获取当前项目配置
-        messageApiInstance.registerHandler('getExportConfig', async () => {
-          const data = getProject(context) || {}
-          const exportConfig = data.exportConfig || {}
-          const exportDir = exportConfig.exportDir || ''
-
-          return exportConfig
+        // 获取低码项目内容
+        messageApiInstance.registerHandler('getFileContent', async () => {
+          const data = getFileContent(context)
+          return data
         })
 
-        // 保存项目
-        messageApiInstance.registerHandler('saveProject', async (data) => {
-          saveProject(context, data)
-        })
-
-        // 选择导出目录
-        messageApiInstance.registerHandler('selectExportDir', async (data) => {
-          const defaultUri = getWorkspaceFolder(context)
-          const result = await vscode.window.showOpenDialog({
-            canSelectFiles: false,
-            canSelectFolders: true,
-            canSelectMany: false,
-            defaultUri,
-            openLabel: '选择',
-            title: '选择要保存应用的文件夹',
-          })
-          if (result && result.length > 0) {
-            const selectedFolder = result[0].fsPath
-            return {
-              path: selectedFolder,
-            }
-          }
-          return {
-            message: '取消选择',
-          }
+        // 保存低码项目
+        messageApiInstance.registerHandler('saveFileContent', async (data) => {
+          saveFileContent(context, data)
         })
 
         // 导出项目
-        messageApiInstance.registerHandler('export', async (data) => {
-          const { projectName, exportDir, configJson, toZip } = data
-          try {
-            const projectJson = generateTaroProjectJson(
-              toCodeTaro(configJson, taroConfig)
-            )
-
-            console.log('projectJson', projectJson)
-            await generateTaroProject({
-              projectName,
-              exportDir,
-              projectJson,
-              toZip,
-            })
-            return {
-              success: true,
-              message: '导出成功',
-            }
-          } catch (error) {
-            console.error('导出失败', error)
-            return {
-              success: false,
-              message: error,
-            }
-          }
+        messageApiInstance.registerHandler('exportProject', async (data) => {
+          const { configJson } = data
+          const res = await exportProject(context, configJson)
+          return res
         })
         // currentPanel.webview.onDidReceiveMessage(
         //   async (message) => {

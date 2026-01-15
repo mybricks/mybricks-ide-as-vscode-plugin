@@ -4,19 +4,17 @@
  */
 const { message } = (window as any).antd
 
-// 本地存储 Key
-const STORAGE_KEY = '--mybricks-file-content-'
-
 // 服务连接器插件
 const servicePlugin = window['@mybricks/plugins/service'].default
+
+const vsCodeMessage = (window as any).webViewMessageApi
 
 /**
  * 生成设计器配置
  */
-function config({ designerRef }) {
-  // 从 localStorage 读取缓存
-  const cachedContent = localStorage.getItem(STORAGE_KEY)
-  const fileContent = cachedContent ? JSON.parse(cachedContent) : null
+async function config({ designerRef }) {
+  // 读取低码项目内容
+  const fileContent = await vsCodeMessage.call('getFileContent')
 
   // tabbar
   ;(window as any).tabbarModel.initFromFileContent(fileContent)
@@ -41,8 +39,8 @@ function config({ designerRef }) {
       })
     },
 
-    // 保存到 localStorage
-    save() {
+    // 保存
+    async save() {
       try {
         if (!designerRef.current) {
           message.error('设计器未初始化')
@@ -111,8 +109,8 @@ function config({ designerRef }) {
         const tabbar = (window as any).__tabbar__.get()
         saveContent.extra.tabbar = tabbar
 
-        // 持久化到 localStorage
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(saveContent))
+        // 通知 VS Code 保存文件
+        await vsCodeMessage.call('saveFileContent', saveContent)
 
         message.info(`保存完成`)
       } catch (error) {
