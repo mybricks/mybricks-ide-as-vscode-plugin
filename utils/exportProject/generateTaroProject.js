@@ -4,6 +4,18 @@ const { spawnSync } = require('child_process')
 
 const ZIP_NAME = 'dist'
 
+// 兼容凡泰的模板，强制先删除冲突的文件
+const deleteConflictingFiles = (dir) => {
+  const conflictingFiles = ['src', 'config']
+
+  conflictingFiles.forEach((file) => {
+    const filePath = path.join(dir, file)
+    if (fs.existsSync(filePath)) {
+      fs.rmSync(filePath, { recursive: true, force: true })
+    }
+  })
+}
+
 const generateTaroProject = (opts) => {
   const { projectJson, exportDir, toZip } = opts || {}
 
@@ -65,6 +77,9 @@ const generateTaroProject = (opts) => {
       if (!fs.existsSync(tempDir)) {
         fs.mkdirSync(tempDir, { recursive: true })
       }
+
+      // 兼容凡泰的模板，强制先删除冲突的文件
+      deleteConflictingFiles(tempDir)
 
       projectJson.forEach((node) => {
         processNode(node, tempDir)
