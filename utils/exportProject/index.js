@@ -8,7 +8,7 @@ const { getWorkspaceFolder } = require('../utils')
 const generateTaroProject = require('./generateTaroProject')
 
 // 导出路径
-const EXPORT_DIR = 'dist'
+const EXPORT_DIR = ''
 
 /**
  * 导出

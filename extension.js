@@ -7,6 +7,7 @@ const { getWebviewContent } = require('./webview')
 const messageApi = require('./utils/messageApi')
 const { getFileContent, saveFileContent } = require('./utils/saveProject')
 const { exportProject } = require('./utils/exportProject')
+const { isMybricksProject } = require('./utils/utils')
 
 // 当前面板实例，单例模式
 let currentPanel = undefined
@@ -177,9 +178,11 @@ function activate(context) {
   )
 
   // 启动时自动打开设计器
-  setTimeout(() => {
-    vscode.commands.executeCommand('mybricks.openIDE')
-  }, 100)
+  if (isMybricksProject(context)) {
+    setTimeout(() => {
+      vscode.commands.executeCommand('mybricks.openIDE')
+    }, 100)
+  }
 }
 
 /**
