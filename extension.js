@@ -7,6 +7,7 @@ const path = require('path')
 const { getWebviewContent } = require('./webview')
 const messageApi = require('./utils/messageApi')
 const generateTaroProject = require('./utils/generateTaroProject')
+const { getWorkspaceFolder, saveProject } = require('./utils/saveProject')
 const {
   toCodeTaro,
   generateTaroProjectJson,
@@ -58,6 +59,43 @@ function activate(context) {
         // 监听来自 webview 的消息（扩展用于未来的交互）
         const messageApiInstance = new messageApi(currentPanel)
 
+        // 获取当前项目配置
+        messageApiInstance.registerHandler('getExportConfig', async () => {
+          const data = getProject(context) || {}
+          const exportConfig = data.exportConfig || {}
+          const exportDir = exportConfig.exportDir || ''
+
+          return exportConfig
+        })
+
+        // 保存项目
+        messageApiInstance.registerHandler('saveProject', async (data) => {
+          saveProject(context, data)
+        })
+
+        // 选择导出目录
+        messageApiInstance.registerHandler('selectExportDir', async (data) => {
+          const defaultUri = getWorkspaceFolder(context)
+          const result = await vscode.window.showOpenDialog({
+            canSelectFiles: false,
+            canSelectFolders: true,
+            canSelectMany: false,
+            defaultUri,
+            openLabel: '选择',
+            title: '选择要保存应用的文件夹',
+          })
+          if (result && result.length > 0) {
+            const selectedFolder = result[0].fsPath
+            return {
+              path: selectedFolder,
+            }
+          }
+          return {
+            message: '取消选择',
+          }
+        })
+
+        // 导出项目
         messageApiInstance.registerHandler('export', async (data) => {
           const { projectName, exportDir, configJson, toZip } = data
           try {
@@ -82,48 +120,6 @@ function activate(context) {
               success: false,
               message: error,
             }
-          }
-        })
-
-        // 选择导出目录
-        messageApiInstance.registerHandler('selectExportDir', async (data) => {
-          let defaultUri
-          const workspaceFolders = vscode.workspace.workspaceFolders
-
-          if (workspaceFolders && workspaceFolders.length > 0) {
-            // 优先使用当前工作区目录
-            defaultUri = workspaceFolders[0].uri
-          } else if (vscode.window.activeTextEditor) {
-            // 如果没有打开文件夹，尝试使用当前编辑文件的目录
-            const activeUri = vscode.window.activeTextEditor.document.uri
-            if (activeUri.scheme === 'file') {
-              defaultUri = vscode.Uri.file(path.dirname(activeUri.fsPath))
-            }
-          }
-
-          // 如果以上都获取不到，使用插件根目录作为兜底
-          if (!defaultUri) {
-            defaultUri = extensionUri
-          }
-
-          console.log('defaultUri', defaultUri)
-
-          const result = await vscode.window.showOpenDialog({
-            canSelectFiles: false,
-            canSelectFolders: true,
-            canSelectMany: false,
-            defaultUri,
-            openLabel: '选择',
-            title: '选择要保存应用的文件夹',
-          })
-          if (result && result.length > 0) {
-            const selectedFolder = result[0].fsPath
-            return {
-              path: selectedFolder,
-            }
-          }
-          return {
-            message: '取消选择',
           }
         })
         // currentPanel.webview.onDidReceiveMessage(
