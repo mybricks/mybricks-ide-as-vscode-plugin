@@ -1,0 +1,98 @@
+const fs = require('fs')
+const path = require('path')
+const vscode = require('vscode')
+const MessageAPI = require('../../../utils/messageApi')
+
+/**
+ * Webview 面板管理类
+ */
+class WebviewPanel {
+  constructor() {
+    this.currentPanel = undefined
+  }
+
+  /**
+   * 获取 webview HTML 内容
+   * @param {vscode.Webview} webview
+   * @param {vscode.Uri} extensionUri
+   * @returns {string}
+   */
+  getWebviewContent(webview, extensionUri) {
+    const htmlPath = path.join(__dirname, 'index.html')
+    let htmlContent = fs.readFileSync(htmlPath, 'utf8')
+
+    // 将 ./asserts/... 等本地相对路径转成 webview 资源 URI
+    htmlContent = htmlContent.replace(/\.\/asserts\/([^"'\s)]+)/g, (_, relPath) => {
+      const resourceUri = vscode.Uri.joinPath(extensionUri, 'asserts', relPath)
+      return webview.asWebviewUri(resourceUri).toString()
+    })
+
+    return htmlContent
+  }
+
+  /**
+   * 创建或显示 webview 面板
+   * @param {vscode.ExtensionContext} context
+   * @param {Function} registerHandlers - 注册事件处理器的函数
+   * @returns {vscode.WebviewPanel}
+   */
+  createOrShow(context, registerHandlers) {
+    const extensionUri = context.extensionUri
+
+    if (this.currentPanel) {
+      // 如果面板已存在，显示并更新
+      this.currentPanel.reveal(vscode.ViewColumn.One)
+      this.currentPanel.webview.html = this.getWebviewContent(
+        this.currentPanel.webview,
+        extensionUri
+      )
+      return this.currentPanel
+    }
+
+    // 创建新面板
+    this.currentPanel = vscode.window.createWebviewPanel(
+      'mybricksWeb',
+      'MyBricks',
+      vscode.ViewColumn.One,
+      {
+        enableScripts: true, // 允许运行 JS
+        retainContextWhenHidden: true, // 隐藏时保留状态
+        localResourceRoots: [
+          // 允许访问的本地资源路径
+          vscode.Uri.joinPath(extensionUri, 'asserts'),
+          extensionUri,
+        ],
+      }
+    )
+
+    this.currentPanel.webview.html = this.getWebviewContent(
+      this.currentPanel.webview,
+      extensionUri
+    )
+
+    // 创建消息 API 实例
+    const messageApiInstance = new MessageAPI(this.currentPanel)
+
+    // 注册事件处理器
+    if (registerHandlers) {
+      registerHandlers(messageApiInstance, context)
+    }
+
+    // 面板关闭时清理
+    this.currentPanel.onDidDispose(() => {
+      this.currentPanel = undefined
+    })
+
+    return this.currentPanel
+  }
+
+  /**
+   * 获取当前面板实例
+   * @returns {vscode.WebviewPanel|undefined}
+   */
+  getCurrentPanel() {
+    return this.currentPanel
+  }
+}
+
+module.exports = WebviewPanel

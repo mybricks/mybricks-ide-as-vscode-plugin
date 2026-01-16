@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0;
+        padding: 10px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: var(--vscode-sideBar-background);
+        color: var(--vscode-sideBar-foreground);
+      }
+      .container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+      }
+      .btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 30px;
+        background: #d1d3db;
+        cursor: pointer;
+        color: #000;
+        border-radius: 4px;
+      }
+      .btn:hover {
+        background: #edeff2;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <span class="btn" onclick="openIDE()">打开 MyBricks IDE</span>
+    </div>
+    <script>
+      // 初始化 VS Code API
+      const vscode = acquireVsCodeApi()
+      window.VS_CODE = vscode
+
+      // 打开 MyBricks IDE
+      function openIDE() {
+        window.VS_CODE.postMessage({
+          command: 'openIDE',
+        })
+      }
+    </script>
+  </body>
+</html>
+
