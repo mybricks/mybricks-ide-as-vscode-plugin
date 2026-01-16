@@ -16,7 +16,7 @@ function onActivate(context) {
       vscode.commands.executeCommand('mybricks.openIDE')
     }, 100)
   }
-  vscode.commands.executeCommand('mybricks.openIDE')
+  // vscode.commands.executeCommand('mybricks.openIDE')
 }
 
 /**
