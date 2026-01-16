@@ -22,10 +22,17 @@ class WebviewPanel {
     let htmlContent = fs.readFileSync(htmlPath, 'utf8')
 
     // 将 ./asserts/... 等本地相对路径转成 webview 资源 URI
-    htmlContent = htmlContent.replace(/\.\/asserts\/([^"'\s)]+)/g, (_, relPath) => {
-      const resourceUri = vscode.Uri.joinPath(extensionUri, 'asserts', relPath)
-      return webview.asWebviewUri(resourceUri).toString()
-    })
+    htmlContent = htmlContent.replace(
+      /\.\/asserts\/([^"'\s)]+)/g,
+      (_, relPath) => {
+        const resourceUri = vscode.Uri.joinPath(
+          extensionUri,
+          'asserts',
+          relPath
+        )
+        return webview.asWebviewUri(resourceUri).toString()
+      }
+    )
 
     return htmlContent
   }
@@ -77,6 +84,15 @@ class WebviewPanel {
     if (registerHandlers) {
       registerHandlers(messageApiInstance, context)
     }
+
+    // 在新窗口打开
+    // vscode.commands.executeCommand('workbench.action.moveEditorToNewWindow')
+
+    // 关闭左侧边栏
+    vscode.commands.executeCommand('workbench.action.closeSidebar')
+
+    // 关闭底部面板
+    vscode.commands.executeCommand('workbench.action.closePanel')
 
     // 面板关闭时清理
     this.currentPanel.onDidDispose(() => {
