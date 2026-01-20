@@ -34,14 +34,14 @@ function getWorkspaceFolder(context) {
  * 读取工作区的fide.project.config.json，判断是不是低码项目
  */
 const PROJECT_CONFIG_FILE = 'fide.project.config.json'
-const MYBRICKS_PROJECT_KEY = 'mybricksProject'
+const MYBRICKS_PROJECT_KEY = 'mybricksType'
 function isMybricksProject(context) {
   const defaultUri = getWorkspaceFolder(context)
   const filePath = path.join(defaultUri.fsPath, PROJECT_CONFIG_FILE)
   try {
     const projectConfigContent = fs.readFileSync(filePath, 'utf8')
     const projectConfig = JSON.parse(projectConfigContent)
-    return projectConfig[MYBRICKS_PROJECT_KEY] === true
+    return projectConfig[MYBRICKS_PROJECT_KEY] === 1
   } catch (error) {
     return false
   }
