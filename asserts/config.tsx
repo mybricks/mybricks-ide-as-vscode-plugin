@@ -35,6 +35,8 @@ async function config({ designerRef }) {
         resolve([
           // Taro 小程序组件库
           `https://p66-ec.becukwai.com/udata/pkg/eshop/fangzhou/mybricks.normal-miniapp.taro/0.5.17/edit.js`,
+          // `https://assets.mybricks.world/comlibs/mybricks.normal-chart.taro/0.0.22/2025-02-28_18-19-56/edit.js`,
+          'http://127.0.0.1:5500/edit.js',
         ])
       })
     },
@@ -262,7 +264,7 @@ async function config({ designerRef }) {
         // 调用连接器（HTTP 请求等）
         callConnector(connector, params) {
           const plugin = designerRef.current?.getPlugin(
-            connector.connectorName || '@mybricks/plugins/service'
+            connector.connectorName || '@mybricks/plugins/service',
           )
 
           if (plugin) {

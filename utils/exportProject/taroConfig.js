@@ -18,12 +18,14 @@ function convertNamespaceToImportName(namespace) {
   return convertNamespaceToComponentName(namespace)
 }
 
+const compNamespace = 'mybricks.taro'
+
 module.exports = {
   getComponentMeta: (com) => {
     const { namespace = '' } = com.def || {}
 
     // JS API 组件（以 _ 开头，如 _showToast）
-    if (namespace.startsWith('mybricks.taro._')) {
+    if (namespace.startsWith(`${compNamespace}._`)) {
       const importName = convertNamespaceToImportName(namespace)
       return {
         importInfo: {
@@ -39,9 +41,8 @@ module.exports = {
     // 普通组件：从 namespace 中提取组件名
     const componentName =
       namespace
-        .split('.')
-        .pop()
-        ?.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase()) ||
+        .replace(`${compNamespace}.`, '')
+        ?.replace(/[_\-\.]([a-zA-Z])/g, (_, letter) => letter.toUpperCase()) ||
       'Component'
     return {
       importInfo: {
