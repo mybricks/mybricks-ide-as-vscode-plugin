@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="no-js">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'none';
+        style-src 'unsafe-inline' https: http:;
+        script-src 'unsafe-inline' 'unsafe-eval' https: http:;
+        img-src https: http: data: blob:;
+        font-src https: http: data:;
+        connect-src * https: http: ws: wss: data: blob:;
+        worker-src blob:;
+        child-src blob:;
+    ">
+    <title>MyBricks.ai Designer</title>
+    
+    <!-- 性能优化元标签 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <!-- 预连接到 CDN 以加速资源加载 -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link rel="preconnect" href="https://p4-ec.eckwai.com" crossorigin>
+    <link rel="preconnect" href="https://p2-ec.eckwai.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://unpkg.com">
+    
+    <!-- INLINE_CSS -->
+
+    <!-- React 18 核心库 - 使用生产版本提升性能 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js" defer></script>
+
+    <!-- Babel Standalone 支持在浏览器内编译 TSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js" defer></script>
+
+    <!-- Ant Design 5 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.13/dayjs.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/antd/5.22.7/antd.min.js" defer></script>
+    <script src="https://f2.eckwai.com/kos/nlav11092/fangzhou/pub/temp/1690444248634.ant-design-icons_4.7.0_min.js" defer></script>
+
+    <!-- MyBricks SDA 引擎 -->
+    <script src="https://p4-ec.eckwai.com/kos/nlav12333/mybricks/designer-spa/3.9.836/index.min.js" defer></script>
+
+    <!-- MyBricks 服务接口连接器插件 -->
+    <script src="https://p2-ec.eckwai.com/kos/nlav12333/mybricks/plugin-http-connector/1.2.30/plugin.9a7ecd7bfad260c2.js" defer></script>
+    
+    <!-- 性能监控脚本 -->
+    <script>
+        // 强制启用硬件加速
+        document.addEventListener('DOMContentLoaded', function() {
+            // 强制重绘以激活 GPU 加速
+            document.body.style.transform = 'translateZ(0)';
+            document.body.style.backfaceVisibility = 'hidden';
+            document.body.style.perspective = '1000px';
+        });
+    </script>
+</head>
+
+<body>
+    <!-- 开发模式重载按钮 -->
+    <div id="dev-reload-btn" style="position: fixed; bottom: 20px; left: 20px; z-index: 999999; display: none;">
+        <button onclick="location.reload()" style="
+            background: #4ade80;
+            color: #1a1a1a;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            font-size: 14px;
+        ">
+            🔄 重新加载
+        </button>
+    </div>
+    
+    <div id="root"></div>
+
+    <script>
+        // ====== 详细的错误捕获和显示系统 ======
+        
+        console.log('🚀 MyBricks: HTML 已加载');
+        console.log('📦 检查依赖加载状态...');
+        
+        // 创建错误显示面板
+        const errorPanel = document.createElement('div');
+        errorPanel.id = 'error-panel';
+        errorPanel.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            padding: 30px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", monospace;
+            font-size: 13px;
+            z-index: 999999;
+            overflow-y: auto;
+            display: none;
+        `;
+        
+        const errorContent = document.createElement('div');
+        errorContent.style.cssText = 'max-width: 1000px; margin: 0 auto;';
+        errorPanel.appendChild(errorContent);
+        
+        let errorCount = 0;
+        let hasErrors = false;
+        
+        function showErrorPanel() {
+            if (!document.body.contains(errorPanel)) {
+                document.body.appendChild(errorPanel);
+            }
+            errorPanel.style.display = 'block';
+            hasErrors = true;
+        }
+        
+        function addError(title, details, stack) {
+            errorCount++;
+            showErrorPanel();
+            
+            const errorBlock = document.createElement('div');
+            errorBlock.style.cssText = `
+                background: rgba(255, 107, 107, 0.1);
+                border-left: 4px solid #ff6b6b;
+                padding: 20px;
+                margin: 15px 0;
+                border-radius: 8px;
+            `;
+            
+            errorBlock.innerHTML = `
+                <div style="font-size: 16px; font-weight: bold; color: #ff6b6b; margin-bottom: 10px;">
+                    ❌ 错误 #${errorCount}: ${escapeHtml(title)}
+                </div>
+                <div style="color: #ffd700; margin: 10px 0;">
+                    详情: ${escapeHtml(details)}
+                </div>
+                ${stack ? `
+                    <details style="margin-top: 10px;">
+                        <summary style="cursor: pointer; color: #4ade80;">📋 堆栈跟踪</summary>
+                        <pre style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 4px; overflow-x: auto; margin-top: 10px;">${escapeHtml(stack)}</pre>
+                    </details>
+                ` : ''}
+            `;
+            
+            errorContent.appendChild(errorBlock);
+        }
+        
+        function addInfo(title, details) {
+            const infoBlock = document.createElement('div');
+            infoBlock.style.cssText = `
+                background: rgba(74, 222, 128, 0.1);
+                border-left: 4px solid #4ade80;
+                padding: 15px;
+                margin: 10px 0;
+                border-radius: 8px;
+            `;
+            
+            infoBlock.innerHTML = `
+                <div style="font-size: 14px; font-weight: bold; color: #4ade80; margin-bottom: 5px;">
+                    ${title}
+                </div>
+                <div style="color: #e0e0e0;">
+                    ${details}
+                </div>
+            `;
+            
+            errorContent.appendChild(infoBlock);
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // 创建简洁的状态栏
+        const statusBar = document.createElement('div');
+        statusBar.id = 'status-bar';
+        statusBar.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            z-index: 999998;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        `;
+        statusBar.innerHTML = '⏳ 正在加载...';
+        
+        // 添加标题
+        errorContent.innerHTML = `
+            <h1 style="font-size: 28px; margin-bottom: 20px; color: #ff6b6b;">
+                🔍 MyBricks 调试信息
+            </h1>
+            <div style="color: #999; margin-bottom: 30px;">
+                由于无法打开 DevTools，这里显示所有错误和状态信息
+            </div>
+        `;
+        
+        // 捕获脚本加载错误
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.appendChild(statusBar);
+            
+            const scripts = document.querySelectorAll('script[src]');
+            let loadedCount = 0;
+            const totalScripts = scripts.length;
+            
+            scripts.forEach((script, index) => {
+                script.addEventListener('load', function() {
+                    loadedCount++;
+                    console.log(`✅ 脚本加载成功 (${loadedCount}/${totalScripts}):`, script.src);
+                    statusBar.innerHTML = `⏳ 加载中... ${loadedCount}/${totalScripts}`;
+                });
+                
+                script.addEventListener('error', function() {
+                    console.error('❌ 脚本加载失败:', script.src);
+                    addError(
+                        '脚本加载失败',
+                        script.src,
+                        '这通常是网络问题或 CDN 被阻止导致的'
+                    );
+                    statusBar.innerHTML = '❌ 加载失败！点击查看详情';
+                    statusBar.style.cursor = 'pointer';
+                    statusBar.style.background = 'rgba(255, 107, 107, 0.9)';
+                    statusBar.onclick = () => showErrorPanel();
+                });
+            });
+        });
+        
+        // 捕获所有 JavaScript 错误
+        window.addEventListener('error', function(e) {
+            console.error('❌ JavaScript 错误:', e);
+            
+            // 如果是脚本加载错误，已经在上面处理了
+            if (e.target && (e.target.tagName === 'SCRIPT' || e.target.tagName === 'LINK')) {
+                return;
+            }
+            
+            addError(
+                e.message || '未知错误',
+                `文件: ${e.filename || '未知'}\n行号: ${e.lineno || '?'}:${e.colno || '?'}`,
+                e.error ? e.error.stack : ''
+            );
+            
+            statusBar.innerHTML = '❌ JS 错误！点击查看';
+            statusBar.style.cursor = 'pointer';
+            statusBar.style.background = 'rgba(255, 107, 107, 0.9)';
+            statusBar.onclick = () => showErrorPanel();
+        }, true);
+        
+        // 捕获 Promise 拒绝
+        window.addEventListener('unhandledrejection', function(e) {
+            console.error('❌ Promise 错误:', e);
+            
+            addError(
+                'Promise 被拒绝',
+                e.reason?.message || String(e.reason),
+                e.reason?.stack || ''
+            );
+            
+            statusBar.innerHTML = '❌ Promise 错误！点击查看';
+            statusBar.style.cursor = 'pointer';
+            statusBar.style.background = 'rgba(255, 107, 107, 0.9)';
+            statusBar.onclick = () => showErrorPanel();
+        });
+        
+        // 检查依赖加载
+        window.addEventListener('load', function() {
+            console.log('✅ window.load 事件触发');
+            
+            setTimeout(function() {
+                const checks = [
+                    { name: 'React', obj: window.React, url: 'https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/...' },
+                    { name: 'ReactDOM', obj: window.ReactDOM, url: 'https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/...' },
+                    { name: 'Babel', obj: window.Babel, url: 'https://unpkg.com/@babel/standalone/...' },
+                    { name: 'antd', obj: window.antd, url: 'https://cdnjs.cloudflare.com/ajax/libs/antd/5.22.7/...' },
+                    { name: 'mybricks', obj: window.mybricks, url: 'https://p4-ec.eckwai.com/kos/nlav12333/mybricks/...' }
+                ];
+                
+                const failed = checks.filter(c => typeof c.obj === 'undefined');
+                const succeeded = checks.filter(c => typeof c.obj !== 'undefined');
+                
+                if (failed.length === 0 && !hasErrors) {
+                    // 所有依赖加载成功
+                    addInfo('✅ 所有依赖加载成功', succeeded.map(c => `✓ ${c.name}`).join('<br>'));
+                    statusBar.innerHTML = '✅ 加载成功！';
+                    statusBar.style.background = 'rgba(74, 222, 128, 0.9)';
+                    
+                    // 3秒后隐藏
+                    setTimeout(() => {
+                        statusBar.style.display = 'none';
+                        if (!hasErrors) {
+                            errorPanel.style.display = 'none';
+                        }
+                    }, 3000);
+                } else {
+                    // 有依赖加载失败
+                    if (failed.length > 0) {
+                        failed.forEach(dep => {
+                            addError(
+                                `${dep.name} 加载失败`,
+                                dep.url,
+                                '可能原因：\n1. 网络连接问题\n2. CDN 被防火墙阻止\n3. 需要 VPN 访问'
+                            );
+                        });
+                    }
+                    
+                    if (succeeded.length > 0) {
+                        addInfo('✅ 已成功加载', succeeded.map(c => `✓ ${c.name}`).join('<br>'));
+                    }
+                    
+                    // 添加解决方案
+                    const solutionBlock = document.createElement('div');
+                    solutionBlock.style.cssText = `
+                        background: rgba(255, 215, 0, 0.1);
+                        border-left: 4px solid #ffd700;
+                        padding: 20px;
+                        margin: 20px 0;
+                        border-radius: 8px;
+                    `;
+                    solutionBlock.innerHTML = `
+                        <div style="font-size: 16px; font-weight: bold; color: #ffd700; margin-bottom: 10px;">
+                            💡 解决方案
+                        </div>
+                        <ol style="margin-left: 20px; line-height: 1.8;">
+                            <li>检查网络连接是否正常</li>
+                            <li>尝试使用 VPN</li>
+                            <li>检查防火墙是否阻止了 CDN 访问</li>
+                            <li>在浏览器中测试 CDN 是否可访问</li>
+                        </ol>
+                        <div style="margin-top: 15px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 4px;">
+                            <strong>测试命令：</strong><br>
+                            <code>curl -I https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js</code>
+                        </div>
+                    `;
+                    errorContent.appendChild(solutionBlock);
+                    
+                    showErrorPanel();
+                    statusBar.innerHTML = '❌ 加载失败！点击查看详情';
+                    statusBar.style.cursor = 'pointer';
+                    statusBar.style.background = 'rgba(255, 107, 107, 0.9)';
+                    statusBar.onclick = () => showErrorPanel();
+                }
+            }, 2000);
+        });
+        
+        // 监听来自 IDE 的消息
+        window.addEventListener('message', event => {
+            const message = event.data;
+            console.log('📨 收到消息:', message);
+        });
+        
+        // 开发模式：按 Cmd+R / Ctrl+R 刷新页面
+        document.addEventListener('keydown', function(e) {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'r') {
+                e.preventDefault();
+                console.log('🔄 重新加载页面...');
+                location.reload();
+            }
+        });
+        
+        // 显示重载按钮（按住 Shift 3 秒）
+        let shiftTimer = null;
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Shift' && !shiftTimer) {
+                shiftTimer = setTimeout(() => {
+                    document.getElementById('dev-reload-btn').style.display = 'block';
+                    console.log('💡 重载按钮已显示');
+                }, 3000);
+            }
+        });
+        
+        document.addEventListener('keyup', function(e) {
+            if (e.key === 'Shift' && shiftTimer) {
+                clearTimeout(shiftTimer);
+                shiftTimer = null;
+            }
+        });
+    </script>
+
+    <!-- INLINE_CONFIG -->
+    <!-- INLINE_APP -->
+</body>
+
+</html>
+

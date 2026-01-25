@@ -1,0 +1,68 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+    <id>com.mybricks.jetbrains</id>
+
+    <!-- Public plugin name should be written in Title Case.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
+    <name>MyBricks.ai</name>
+
+    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+    <vendor email="support@mybricks.ai" url="https://mybricks.ai">MyBricks</vendor>
+
+    <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
+         Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
+    <description><![CDATA[
+    <h2>MyBricks.ai Visual Development Platform - JetBrains IDE Integration</h2>
+    <p>A powerful visual page builder for mini-programs and H5 pages, integrated directly into your JetBrains IDE.</p>
+    
+    <h3>Key Features:</h3>
+    <ul>
+      <li>Visual page designer with drag-and-drop interface</li>
+      <li>Support for mini-programs and H5 page development</li>
+      <li>Rich component library with extensible architecture</li>
+      <li>Real-time preview and hot reload</li>
+      <li>Local project data storage</li>
+      <li>HTTP connector support for API integration</li>
+      <li>Built-in Ant Design components</li>
+    </ul>
+    
+    <h3>How to Use:</h3>
+    <ol>
+      <li>Click the "Open MyBricks IDE" button in the toolbar</li>
+      <li>Or use the MyBricks tool window in the sidebar</li>
+      <li>Start building your application visually!</li>
+    </ol>
+    
+    <p>MyBricks.ai helps developers create applications faster with an intuitive visual interface while maintaining full code control.</p>
+  ]]></description>
+
+    <!-- Product and plugin compatibility requirements.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <!-- Extension points defined by the plugin.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- 注册工具窗口 -->
+        <toolWindow id="MyBricks" 
+                    secondary="false" 
+                    icon="/icons/pluginIcon.svg" 
+                    anchor="right"
+                    factoryClass="com.mybricks.jetbrains.MyBricksToolWindowFactory"/>
+    </extensions>
+
+    <!-- Actions -->
+    <actions>
+        <!-- 添加到主工具栏 -->
+        <action id="MyBricks.OpenIDE"
+                class="com.mybricks.jetbrains.actions.OpenMyBricksAction"
+                text="Open MyBricks IDE"
+                description="打开 MyBricks 可视化设计器"
+                icon="/icons/pluginIcon.svg">
+            <add-to-group group-id="MainToolBar" anchor="last"/>
+        </action>
+    </actions>
+</idea-plugin>
+
