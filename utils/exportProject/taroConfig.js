@@ -30,7 +30,7 @@ module.exports = {
       return {
         importInfo: {
           name: importName,
-          from: '../../core/comlib',
+          from: '@/core/comlib',
           type: 'named',
         },
         name: importName,
@@ -47,15 +47,15 @@ module.exports = {
     return {
       importInfo: {
         name: componentName,
-        from: '../../components',
+        from: '@/components',
         type: 'named',
       },
       name: componentName,
       callName: componentName,
     }
   },
-  getComponentPackageName: () => '../../core/utils/index',
-  getUtilsPackageName: () => '../../core/utils/index',
+  getComponentPackageName: () => '@/core/utils/index',
+  getUtilsPackageName: () => '@/core/utils/index',
   getPageId: (id) => id,
   getModuleApi: () => ({
     dependencyImport: {
