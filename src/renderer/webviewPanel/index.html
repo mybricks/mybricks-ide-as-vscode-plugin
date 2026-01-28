@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN" class="no-js">
   <head>
     <meta charset="UTF-8" />
@@ -25,13 +25,17 @@
     <!-- React 18 核心库 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+    <script>
+      window.react = window.React
+      window['react-dom'] = window.ReactDOM
+    </script>
 
     <!-- Babel Standalone - 支持在浏览器内编译 TSX -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <!-- Ant Design 5 组件库 -->
     <script src="./asserts/cssinjs.min.js"></script>
-    <!-- Day.js 日期库（本地安装） -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.13/dayjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/antd/5.22.7/antd.min.js"></script>
     <script src="https://f2.eckwai.com/kos/nlav11092/fangzhou/pub/temp/1690444248634.ant-design-icons_4.7.0_min.js"></script>
 
@@ -40,8 +44,7 @@
 
     <!-- MyBricks 服务接口连接器插件 -->
     <!-- <script src="https://p2-ec.eckwai.com/kos/nlav12333/mybricks/plugin-http-connector/1.2.30/plugin.9a7ecd7bfad260c2.js"></script> -->
-    <script src="./node_modules/@mybricks/plugin-connector-http/runtime/index.js"></script>
-    
+    <script src="./node_modules/@mybricks/plugin-connector-http/runtime/plugin.js"></script>
 
     <!-- Webview 消息 API -->
     <script src="./asserts/webViewMessageApi.js"></script>

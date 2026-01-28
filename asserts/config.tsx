@@ -5,6 +5,10 @@
 const { message } = (window as any).antd
 
 // 服务连接器插件
+console.log(
+  '>>>window@mybricks/plugins/service',
+  window['@mybricks/plugins/service'],
+)
 const servicePlugin = window['@mybricks/plugins/service'].default
 
 const vsCodeMessage = (window as any).webViewMessageApi
@@ -23,7 +27,9 @@ async function config({ designerRef }) {
     version: new Date().getTime(), // 版本号
     type: 'mpa', // 多页应用模式
     plugins: [
-      servicePlugin(), // HTTP 接口连接器
+      servicePlugin({
+        isPrivatization: false,
+      }), // HTTP 接口连接器
     ],
 
     // 组件库添加器（预留）
