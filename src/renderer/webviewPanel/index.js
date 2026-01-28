@@ -34,6 +34,19 @@ class WebviewPanel {
       }
     )
 
+    // 将 ./node_modules/... 路径转成 webview 资源 URI
+    htmlContent = htmlContent.replace(
+      /\.\/node_modules\/([^"'\s)]+)/g,
+      (_, relPath) => {
+        const resourceUri = vscode.Uri.joinPath(
+          extensionUri,
+          'node_modules',
+          relPath
+        )
+        return webview.asWebviewUri(resourceUri).toString()
+      }
+    )
+
     return htmlContent
   }
 
@@ -67,6 +80,7 @@ class WebviewPanel {
         localResourceRoots: [
           // 允许访问的本地资源路径
           vscode.Uri.joinPath(extensionUri, 'asserts'),
+          vscode.Uri.joinPath(extensionUri, 'node_modules'),
           extensionUri,
         ],
       }
