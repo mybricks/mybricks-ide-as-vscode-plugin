@@ -22,10 +22,13 @@ const compNamespace = 'mybricks.taro'
 
 module.exports = {
   getComponentMeta: (com) => {
-    const { namespace = '' } = com.def || {}
+    const { namespace = '', rtType = '' } = com.def || {}
 
     // JS API 组件（以 _ 开头，如 _showToast）
-    if (namespace.startsWith(`${compNamespace}._`)) {
+    if (
+      namespace.startsWith(`${compNamespace}.`) &&
+      rtType?.match(/^js/gi) !== null
+    ) {
       const importName = convertNamespaceToImportName(namespace)
       return {
         importInfo: {
