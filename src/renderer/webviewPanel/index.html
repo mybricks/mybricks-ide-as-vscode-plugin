@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN" class="no-js">
   <head>
     <meta charset="UTF-8" />
@@ -31,7 +31,8 @@
     </script>
 
     <!-- Babel Standalone - 支持在浏览器内编译 TSX -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- 锁定版本到 7.26.6 以避免新版本带来的破坏性变更 -->
+    <script src="https://unpkg.com/@babel/standalone@7.26.6/babel.min.js"></script>
 
     <!-- Ant Design 5 组件库 -->
     <script src="./asserts/cssinjs.min.js"></script>
