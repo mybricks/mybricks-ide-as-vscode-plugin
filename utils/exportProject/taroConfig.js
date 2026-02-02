@@ -25,8 +25,9 @@ module.exports = {
     const { namespace = '', rtType = '' } = com.def || {}
 
     // JS API 组件（以 _ 开头，如 _showToast）
+    const jsCompNamespace = [`${compNamespace}.`, 'mybricks.normal-pc.']
     if (
-      namespace.startsWith(`${compNamespace}.`) &&
+      jsCompNamespace.some((_namespace) => namespace.startsWith(_namespace)) &&
       rtType?.match(/^js/gi) !== null
     ) {
       const importName = convertNamespaceToImportName(namespace)
