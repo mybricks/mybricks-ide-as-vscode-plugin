@@ -29,6 +29,7 @@ async function config({ designerRef }) {
     plugins: [
       servicePlugin({
         isPrivatization: false,
+        pure: true //连接器输出配置
       }), // HTTP 接口连接器
     ],
 
