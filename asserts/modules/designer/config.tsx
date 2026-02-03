@@ -4,11 +4,10 @@
  */
 const { message } = (window as any).antd
 
+import testStr from './test'
+
 // 服务连接器插件
-console.log(
-  '>>>window@mybricks/plugins/service',
-  window['@mybricks/plugins/service'],
-)
+console.log('>>>testStr', testStr)
 const servicePlugin = window['@mybricks/plugins/service'].default
 
 const vsCodeMessage = (window as any).webViewMessageApi
@@ -29,7 +28,7 @@ async function config({ designerRef }) {
     plugins: [
       servicePlugin({
         isPrivatization: false,
-        pure: true //连接器输出配置
+        pure: true, //连接器输出配置
       }), // HTTP 接口连接器
     ],
 
