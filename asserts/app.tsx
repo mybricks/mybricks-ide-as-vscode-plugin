@@ -1,17 +1,7 @@
-/**
- * MyBricks 主应用入口
- */
-declare const React: any
-declare const ReactDOM: any
-
-const { useState, useRef, useCallback, useEffect } = React
-const rootEl = document.getElementById('root')
-
-// MyBricks SPA Designer 引擎
-const { SPADesigner } = (window as any).mybricks
-
-// 获取配置函数（由 config.tsx 挂载）
-const configFn = (window as any).config
+import React, { useState, useRef, useCallback, useEffect } from 'react'
+import { ConfigProvider, message, Space } from 'antd'
+import { config as configFn } from './modules/designer/config'
+import { getWebViewMessageAPI } from '../src/webview/utils/message'
 
 const ANTD_CONFIG = {
   theme: {
@@ -20,20 +10,15 @@ const ANTD_CONFIG = {
     },
   },
 }
-const { ConfigProvider, message, Space } = (window as any).antd
 
-const vsCodeMessage = (window as any).webViewMessageApi
-
-// 渲染应用
-if (rootEl) {
-  const root = ReactDOM.createRoot(rootEl)
-  root.render(<App />)
-}
+const vsCodeMessage = getWebViewMessageAPI()!
 
 /**
- * 主应用组件
+ * MyBricks 主应用入口
  */
-function App() {
+export default function App() {
+  // 动态获取设计器组件，确保渲染时引擎已就绪
+  const { SPADesigner } = (window as any).mybricks || {}
   // 内容变更计数
   const [changed, setChanged] = useState(0)
 
@@ -120,7 +105,12 @@ function App() {
 
         {/* 设计器主区域 */}
         <div className={'designer'}>
-          {initSuccess && (
+          {!SPADesigner && (
+            <div style={{ padding: 20, textAlign: 'center' }}>
+              设计器引擎加载中...
+            </div>
+          )}
+          {initSuccess && SPADesigner && (
             <SPADesigner
               config={config.current}
               ref={designerRef}

@@ -18,8 +18,21 @@ class WebviewPanel {
    * @returns {string}
    */
   getWebviewContent(webview, extensionUri) {
-    const htmlPath = path.join(__dirname, 'index.html')
+    const distDirUri = vscode.Uri.joinPath(extensionUri, 'dist', 'webview')
+    const distIndexPath = path.join(distDirUri.fsPath, 'index.html')
+    const devIndexPath = path.join(__dirname, 'index.html')
+
+    const htmlPath = fs.existsSync(distIndexPath) ? distIndexPath : devIndexPath
     let htmlContent = fs.readFileSync(htmlPath, 'utf8')
+
+    // 将 ./assets/...（Vite 构建产物）路径转成 webview 资源 URI
+    htmlContent = htmlContent.replace(
+      /\.\/assets\/([^"'\s)]+)/g,
+      (_, relPath) => {
+        const resourceUri = vscode.Uri.joinPath(distDirUri, 'assets', relPath)
+        return webview.asWebviewUri(resourceUri).toString()
+      },
+    )
 
     // 将 ./asserts/... 等本地相对路径转成 webview 资源 URI
     htmlContent = htmlContent.replace(
@@ -28,10 +41,10 @@ class WebviewPanel {
         const resourceUri = vscode.Uri.joinPath(
           extensionUri,
           'asserts',
-          relPath
+          relPath,
         )
         return webview.asWebviewUri(resourceUri).toString()
-      }
+      },
     )
 
     // 将 ./node_modules/... 路径转成 webview 资源 URI
@@ -41,10 +54,10 @@ class WebviewPanel {
         const resourceUri = vscode.Uri.joinPath(
           extensionUri,
           'node_modules',
-          relPath
+          relPath,
         )
         return webview.asWebviewUri(resourceUri).toString()
-      }
+      },
     )
 
     return htmlContent
@@ -64,7 +77,7 @@ class WebviewPanel {
       this.currentPanel.reveal(vscode.ViewColumn.One)
       this.currentPanel.webview.html = this.getWebviewContent(
         this.currentPanel.webview,
-        extensionUri
+        extensionUri,
       )
       return this.currentPanel
     }
@@ -81,14 +94,15 @@ class WebviewPanel {
           // 允许访问的本地资源路径
           vscode.Uri.joinPath(extensionUri, 'asserts'),
           vscode.Uri.joinPath(extensionUri, 'node_modules'),
+          vscode.Uri.joinPath(extensionUri, 'dist', 'webview'),
           extensionUri,
         ],
-      }
+      },
     )
 
     this.currentPanel.webview.html = this.getWebviewContent(
       this.currentPanel.webview,
-      extensionUri
+      extensionUri,
     )
 
     // 创建消息 API 实例

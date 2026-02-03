@@ -52,6 +52,18 @@
   },
   "dependencies": {
     "@mybricks/plugin-connector-http": "^1.2.36",
-    "@mybricks/to-code-taro": "^1.1.5"
+    "@mybricks/to-code-taro": "^1.1.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "antd": "^5.22.7",
+    "dayjs": "^1.11.13",
+    "@ant-design/icons": "^4.7.0"
+  },
+  "devDependencies": {
+    "vite": "^5.1.0"
+  },
+  "scripts": {
+    "build:webview": "vite build",
+    "watch:webview": "vite build --watch"
   }
 }

@@ -1,26 +1,24 @@
+import { message } from 'antd'
+import servicePlugin from '@mybricks/plugin-connector-http'
+import { getWebViewMessageAPI } from '../../../src/webview/utils/message'
+import { tabbarModel } from '../../../src/webview/store/tabbar'
+
 /**
  * MyBricks.ai 设计器配置
  * 配置小程序组件库、存储、页面加载等核心功能
  */
-const { message } = (window as any).antd
 
-import testStr from './test'
-
-// 服务连接器插件
-console.log('>>>testStr', testStr)
-const servicePlugin = window['@mybricks/plugins/service'].default
-
-const vsCodeMessage = (window as any).webViewMessageApi
+const vsCodeMessage = getWebViewMessageAPI()!
 
 /**
  * 生成设计器配置
  */
-async function config({ designerRef }) {
+export async function config({ designerRef }) {
   // 读取低码项目内容
   const fileContent = await vsCodeMessage.call('getFileContent')
 
   // tabbar
-  ;(window as any).tabbarModel.initFromFileContent(fileContent)
+  tabbarModel.initFromFileContent(fileContent)
 
   return {
     version: new Date().getTime(), // 版本号
@@ -115,7 +113,7 @@ async function config({ designerRef }) {
 
         if (!saveContent.extra) saveContent.extra = {}
         // tabbar
-        const tabbar = (window as any).__tabbar__.get()
+        const tabbar = tabbarModel.get()
         saveContent.extra.tabbar = tabbar
 
         // 通知 VS Code 保存文件
@@ -309,6 +307,3 @@ async function config({ designerRef }) {
     },
   }
 }
-
-// 挂载到全局供 app.tsx 使用
-;(window as any).config = config
