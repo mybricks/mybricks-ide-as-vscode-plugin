@@ -5,17 +5,11 @@
       "name": "运行扩展 (Run Extension)",
       "type": "extensionHost",
       "request": "launch",
-      "args": [
-        "--extensionDevelopmentPath=${workspaceFolder}"
-      ],
-      "outFiles": [
-        "${workspaceFolder}/**/*.js"
-      ],
-      "preLaunchTask": "${defaultBuildTask}",
+      "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
+      "outFiles": ["${workspaceFolder}/**/*.js"],
+      "preLaunchTask": "npm: watch:webview",
       "sourceMaps": true,
-      "skipFiles": [
-        "<node_internals>/**"
-      ]
+      "skipFiles": ["<node_internals>/**"]
     },
     {
       "name": "附加到扩展 (Attach to Extension)",
@@ -24,9 +18,7 @@
       "port": 9229,
       "restart": true,
       "sourceMaps": true,
-      "skipFiles": [
-        "<node_internals>/**"
-      ]
+      "skipFiles": ["<node_internals>/**"]
     }
   ]
 }

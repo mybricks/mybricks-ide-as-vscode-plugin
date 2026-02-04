@@ -68,6 +68,7 @@
   },
   "scripts": {
     "build:webview": "vite build",
-    "watch:webview": "vite build --watch"
+    "watch:webview": "vite build --watch",
+    "build:vsix": "if not exist unpackage mkdir unpackage && vsce package --out ./unpackage"
   }
 }

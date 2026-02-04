@@ -7,6 +7,7 @@ package-lock.json
 src/webview/**
 demo-jetbrains/**
 *.vsix
+unpackage/**
 **/*.ts
 **/*.tsx
 **/*.map

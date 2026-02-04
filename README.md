@@ -108,21 +108,32 @@ MyBricks IDE VSCode 插件将强大的 MyBricks.ai 可视化搭建平台完整�
 
 ### 1. 本地调试
 
-- **Webview 实时开发**：运行 `npm run watch:webview`，修改 `src/webview` 代码后，在调试窗口执行 `Developer: Reload Window`。
+- **F5 一键调试**：本项目已配置自动化任务，在 VSCode 中直接按 `F5` 键，会自动在后台启动 Webview 构建监听（`npm run watch:webview`）并打开调试窗口。
+- **手动调试**：你也可以手动运行 `npm run watch:webview`，然后在调试窗口执行 `Developer: Reload Window` 查看更新。
 - **插件侧开发**：修改 `src/extension` 或 `extension.js` 后，需点击调试控制台的红色刷新按钮或执行 `Developer: Reload Window`。
 
 ### 2. 插件打包
 
-- **第一步：构建资源**
+如果没安装 vsce，先全局安装：npm install -g @vscode/vsce
+
+- **一键打包（推荐）**
+
   ```bash
+  # 自动构建并打包到 unpackage 目录
+  npm run build:vsix
+  ```
+
+  打包成功后，可在项目根目录的 `unpackage` 文件夹中找到生成的 `.vsix` 文件。
+
+- **手动打包**
+
+  ```bash
+  # 第一步：构建资源
   npm run build:webview
+
+  # 第二步：执行打包
+  vsce package -o ./unpackage/
   ```
-- **第二步：执行打包**
-  ```bash
-  # 如果没安装 vsce，先全局安装：npm install -g @vscode/vsce
-  vsce package
-  ```
-  打包后会生成 `mybricks-webview-x.x.x.vsix` 文件，可在 VSCode 中通过 "Install from VSIX" 安装。
 
 ---
 
@@ -141,6 +152,7 @@ mybricks-ide-as-vscode-plugin/
 │       ├── store/              # 状态管理
 │       └── utils/              # 通信工具
 ├── dist/                       # Webview 构建产物 (Git 已忽略)
+├── unpackage/                  # VSIX 插件打包产物 (Git 已忽略)
 ├── extension.js                # 插件入口文件
 ├── vite.config.ts              # Vite 构建配置
 ├── .vscodeignore               # 插件打包忽略配置
