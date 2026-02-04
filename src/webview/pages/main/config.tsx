@@ -13,7 +13,7 @@ const vsCodeMessage = getWebViewMessageAPI()!
 /**
  * 生成设计器配置
  */
-export async function config({ designerRef }) {
+export async function config({ designerRef }: { designerRef: any }) {
   // 读取低码项目内容
   const fileContent = await vsCodeMessage.call('getFileContent')
 
@@ -34,7 +34,7 @@ export async function config({ designerRef }) {
     comLibAdder() {},
 
     // 组件库加载器
-    comLibLoader(desc) {
+    comLibLoader() {
       return new Promise((resolve, reject) => {
         resolve([
           // Taro 小程序组件库
@@ -101,8 +101,10 @@ export async function config({ designerRef }) {
 
         // 更新页面内容
         if (updatedPageAry) {
-          updatedPageAry.forEach((page) => {
-            const idx = saveContent.pages.findIndex((p) => p.id === page.id)
+          updatedPageAry.forEach((page: any) => {
+            const idx = saveContent.pages.findIndex(
+              (p: any) => p.id === page.id,
+            )
             if (idx > -1) {
               saveContent.pages[idx].content = page.content
             } else {
@@ -132,20 +134,20 @@ export async function config({ designerRef }) {
           const { project } = fileContent
           resolve(project)
         } else {
-          resolve() // 空项目
+          resolve(undefined) // 空项目
         }
       })
     },
 
     // 加载页面内容（根据 ID）
-    pageContentLoader(pageId) {
+    pageContentLoader(pageId: string) {
       return new Promise((resolve, reject) => {
         if (fileContent) {
           const { pages } = fileContent
-          const rtn = pages.find((page) => page.id === pageId)
+          const rtn = pages.find((page: any) => page.id === pageId)
           resolve(rtn)
         } else {
-          resolve()
+          resolve(undefined)
         }
       })
     },
@@ -263,11 +265,11 @@ export async function config({ designerRef }) {
     com: {
       env: {
         // 国际化
-        i18n(title) {
+        i18n(title: any) {
           return title
         },
         // 调用连接器（HTTP 请求等）
-        callConnector(connector, params) {
+        callConnector(connector: any, params: any) {
           const plugin = designerRef.current?.getPlugin(
             connector.connectorName || '@mybricks/plugins/service',
           )
@@ -282,28 +284,6 @@ export async function config({ designerRef }) {
     },
 
     // 编辑器配置面板
-    editView: {
-      items({}, cate0, cate1, cate2) {
-        cate0.title = `项目`
-        cate0.items = [
-          {
-            items: [
-              {
-                title: '项目的配置项例子',
-                type: 'switch',
-                value: {
-                  get(context) {
-                    return context._useRem
-                  },
-                  set(context, v: boolean) {
-                    context._useRem = v
-                  },
-                },
-              },
-            ],
-          },
-        ]
-      },
-    },
+    editView: {},
   }
 }

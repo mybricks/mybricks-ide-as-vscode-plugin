@@ -5,18 +5,17 @@ import * as antd from 'antd'
 import { getWebViewMessageAPI } from '../../utils/message'
 
 // 1. 挂载全局变量。必须在加载 CDN 脚本之前完成，因为它们依赖这些全局变量。
-;(window as any).React = React
+window.React = React
 // 设计器引擎需要 ReactDOM.createRoot (React 18)
-// @ts-ignore
 const mergedReactDOM = {
   ...ReactDOM,
   ...ReactDOMClient,
 }
-;(window as any).ReactDOM = mergedReactDOM
+window.ReactDOM = mergedReactDOM
 ;(window as any)['react-dom'] = mergedReactDOM
 
 // 2. 挂载 antd，供插件使用
-;(window as any).antd = antd
+window.antd = antd
 
 // 3. 初始化 VSCode API 和消息桥
 const vscode = acquireVsCodeApi()

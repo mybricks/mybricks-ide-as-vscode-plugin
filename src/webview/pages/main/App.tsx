@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { ConfigProvider, message, Space } from 'antd'
+import type { NoticeType } from 'antd/es/message/interface'
 import { config as configFn } from './config'
 import { getWebViewMessageAPI } from '../../utils/message'
 
@@ -18,7 +19,7 @@ const vsCodeMessage = getWebViewMessageAPI()!
  */
 export default function App() {
   // 动态获取设计器组件，确保渲染时引擎已就绪
-  const { SPADesigner } = (window as any).mybricks || {}
+  const { SPADesigner } = (window.mybricks || {}) as any
   // 内容变更计数
   const [changed, setChanged] = useState(0)
 
@@ -26,17 +27,20 @@ export default function App() {
   const [exportLoading, setExportLoading] = useState(false)
 
   // 消息提示处理
-  const onMessage = useCallback((type: string, msg: string, duration = 3) => {
-    message.destroy()
-    message[type](msg, duration)
-  }, [])
+  const onMessage = useCallback(
+    (type: NoticeType, msg: string, duration = 3) => {
+      message.destroy()
+      message[type](msg, duration)
+    },
+    [],
+  )
 
   // 设计器实例引用
-  const designerRef = useRef(null)
+  const designerRef = useRef<any>(null)
 
   // 初始化配置
   const [initSuccess, setInitSuccess] = useState(false)
-  const config = useRef(null)
+  const config = useRef<any>(null)
   useEffect(() => {
     configFn({
       designerRef,
@@ -49,7 +53,7 @@ export default function App() {
   // 保存
   const save = useCallback((all?: any) => {
     setChanged(0)
-    config.current.save(all)
+    config.current?.save(all)
   }, [])
 
   // 导出
@@ -57,7 +61,7 @@ export default function App() {
     // setExportPopoverVisible(false)
     setExportLoading(true)
     onMessage('loading', '导出中...', 0)
-    const configJson = designerRef.current.toJSON({
+    const configJson = designerRef.current?.toJSON({
       withDiagrams: true,
       withIOSchema: true,
     })
@@ -114,7 +118,7 @@ export default function App() {
             <SPADesigner
               config={config.current}
               ref={designerRef}
-              onLoad={(e) => console.log('loaded')}
+              onLoad={() => console.log('loaded')}
               onMessage={onMessage}
               onEdit={() => setChanged(changed + 1)}
             />
