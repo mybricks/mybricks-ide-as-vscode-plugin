@@ -10,18 +10,19 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, 'src/webview/pages/main/index.html'),
-        sidebar: path.resolve(__dirname, 'src/webview/pages/sidebar/index.html'),
+        sidebar: path.resolve(
+          __dirname,
+          'src/webview/pages/sidebar/index.html',
+        ),
       },
       output: {
         entryFileNames: `assets/[name]-[hash].js`,
         chunkFileNames: `assets/[name]-[hash].js`,
         assetFileNames: `assets/[name]-[hash].[ext]`,
-      }
+      },
     },
   },
   resolve: {
-    alias: {
-      '@shared': path.resolve(__dirname, 'src/webview'),
-    },
+    alias: {},
   },
 })

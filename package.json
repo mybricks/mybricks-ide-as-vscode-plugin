@@ -2,7 +2,7 @@
   "name": "mybricks-webview",
   "displayName": "MyBricks.ai",
   "description": "MyBricks.ai 可视化开发平台 - VSCode 集成版，支持小程序、H5 页面可视化搭建",
-  "version": "0.0.12",
+  "version": "0.1.1",
   "publisher": "mybricks",
   "repository": {
     "type": "git",

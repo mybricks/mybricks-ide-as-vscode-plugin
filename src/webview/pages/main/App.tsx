@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { ConfigProvider, message, Space } from 'antd'
 import { config as configFn } from './config'
-import { getWebViewMessageAPI } from '@shared/utils/message'
+import { getWebViewMessageAPI } from '../../utils/message'
 
 const ANTD_CONFIG = {
   theme: {

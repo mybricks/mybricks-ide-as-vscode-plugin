@@ -1,7 +1,7 @@
 import { message } from 'antd'
 import servicePlugin from '@mybricks/plugin-connector-http'
-import { getWebViewMessageAPI } from '@shared/utils/message'
-import { tabbarModel } from '@shared/store/tabbar'
+import { getWebViewMessageAPI } from '../../utils/message'
+import { tabbarModel } from '../../store/tabbar'
 
 /**
  * MyBricks.ai 设计器配置
