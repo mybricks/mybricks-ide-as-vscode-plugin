@@ -3,18 +3,25 @@ import path from 'path'
 
 export default defineConfig({
   base: './',
-  root: path.resolve(__dirname, 'src/webview'),
+  root: path.resolve(__dirname, 'src/webview/pages'),
   build: {
     outDir: path.resolve(__dirname, 'dist/webview'),
     emptyOutDir: true,
     rollupOptions: {
-      input: path.resolve(__dirname, 'src/webview/index.html'),
+      input: {
+        main: path.resolve(__dirname, 'src/webview/pages/main/index.html'),
+        sidebar: path.resolve(__dirname, 'src/webview/pages/sidebar/index.html'),
+      },
       output: {
-        // 强制 index.html 输出到 outDir 根目录
         entryFileNames: `assets/[name]-[hash].js`,
         chunkFileNames: `assets/[name]-[hash].js`,
         assetFileNames: `assets/[name]-[hash].[ext]`,
-      },
+      }
+    },
+  },
+  resolve: {
+    alias: {
+      '@shared': path.resolve(__dirname, 'src/webview'),
     },
   },
 })

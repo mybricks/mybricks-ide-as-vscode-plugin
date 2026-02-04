@@ -23,7 +23,7 @@
       {
         "command": "mybricks.openIDE",
         "title": "Open MyBricks IDE",
-        "icon": "asserts/icon.svg"
+        "icon": "src/extension/assets/icon.svg"
       }
     ],
     "viewsContainers": {
@@ -31,7 +31,7 @@
         {
           "id": "mybricks-sidebar",
           "title": "MyBricks",
-          "icon": "asserts/icon.svg"
+          "icon": "src/extension/assets/icon.svg"
         }
       ]
     },

@@ -2,7 +2,7 @@
  * MyBricks VSCode 插件 - 主入口
  * 提供 MyBricks.ai 设计器的 VSCode 集成
  */
-const { onActivate, onDeactivate } = require('./src/hooks')
+const { onActivate, onDeactivate } = require('./src/extension/hooks')
 
 /**
  * 插件激活时调用

@@ -1,0 +1,127 @@
+@charset "utf-8";
+
+@font-face {
+  font-display: auto;
+  font-family: 'vant-icon';
+  font-style: normal;
+  font-weight: normal;
+  src: url('https://at.alicdn.com/t/font_2553510_61agzg96wm8.woff2?t=1631948257467')
+      format('woff2'),
+    url('https://at.alicdn.com/t/font_2553510_61agzg96wm8.woff?t=1631948257467')
+      format('woff'),
+    url('https://at.alicdn.com/t/font_2553510_61agzg96wm8.ttf?t=1631948257467')
+      format('truetype');
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  scrollbar-color: inherit;
+  color: rgba(0, 0, 0, 0.85);
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.ide {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.toolbar {
+  height: 30px;
+  padding: 5px 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  box-shadow: rgba(18, 17, 42, 0.07) 0px 1px 0px;
+  z-index: 107;
+  background-color: #fff;
+}
+
+.toolbar .logo {
+  font-weight: bold;
+  margin-right: auto;
+  font-size: 14px;
+  margin-left: 10px;
+  font-style: italic;
+  color: #999;
+}
+
+.toolbar .btns {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+
+  position: fixed;
+  left: 50%;
+  top: 5px;
+  transform: translateX(-50%);
+}
+
+.toolbar .button {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 3px 12px;
+  margin: 0 2px;
+  cursor: pointer;
+  background-color: #fff;
+  font-size: 12px !important;
+}
+
+.toolbar .primary {
+  background-color: var(--mybricks-color-primary);
+  color: #fff;
+  font-weight: bold;
+  border: 0;
+}
+
+.designer {
+  flex: 1;
+  overflow: hidden;
+}
+
+.export-form {
+  width: 360px;
+}
+.export-form .ant-btn-sm {
+  font-size: 12px;
+}
+.export-form .ant-form-item {
+  margin-bottom: 12px;
+}
+.export-form .ant-form-item-label {
+  padding-bottom: 6px !important;
+}
+.export-form .ant-form-item .ant-form-item-label > label {
+  font-size: 12px;
+}
+.export-form .ant-form-item-explain-error {
+  font-size: 12px;
+  text-align: right;
+}
+
+.ant-popover-title {
+  padding-bottom: 8px !important;
+  box-shadow: rgba(18, 17, 42, 0.07) 0 1px 0;
+  font-weight: 400 !important;
+}
+
+.export-alert-txt {
+  font-weight: 400;
+  font-size: 12px;
+  margin: 0;
+  padding: 0;
+  color: #5c5c5c;
+}

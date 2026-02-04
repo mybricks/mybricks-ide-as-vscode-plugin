@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+        default-src *;
+        style-src 'unsafe-inline' https: http: vscode-webview:;
+        script-src 'unsafe-inline' 'unsafe-eval' https: http: vscode-webview:;
+        img-src https: http: data: blob: vscode-webview:;
+        font-src https: http: data: vscode-webview:;
+        connect-src * https: http: ws: wss: data: blob:;
+        worker-src blob:;
+        child-src blob:;
+    "
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MyBricks.ai Designer</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    <link href="./App.css" rel="stylesheet" type="text/css" />
+  </head>
+
+  <body>
+    <div id="root"></div>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
