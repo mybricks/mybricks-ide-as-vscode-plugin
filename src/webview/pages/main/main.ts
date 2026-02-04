@@ -19,7 +19,7 @@ const mergedReactDOM = {
 ;(window as any).antd = antd
 
 // 3. 初始化 VSCode API 和消息桥
-const vscode = (window as any).acquireVsCodeApi()
+const vscode = acquireVsCodeApi()
 getWebViewMessageAPI(vscode)
 
 // 3. 动态加载 CDN 脚本，确保它们在全局变量准备好后运行

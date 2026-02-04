@@ -1,4 +1,4 @@
-const vscode = (window as any).acquireVsCodeApi()
+const vscode = acquireVsCodeApi()
 
 document.getElementById('openIDE')?.addEventListener('click', () => {
   vscode.postMessage({

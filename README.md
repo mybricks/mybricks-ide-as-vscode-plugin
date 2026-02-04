@@ -19,26 +19,31 @@ MyBricks IDE VSCode 插件将强大的 MyBricks.ai 可视化搭建平台完整�
 ### 🎯 核心优势
 
 **1. 强大的AI+无代码能力**
+
 - 图片直接生成应用、自然语言调整
 - 强大的可视化能力、即时仿真
 - 模块化设计，易于扩展和集成
 
 **2. 多技术栈支持**
+
 - **多渲染器支持**：React、Vue、小程序（Taro）等多种渲染方案
 - **跨端开发**：一次搭建，多端运行（Web、H5、小程序、鸿蒙）
 - **源码生成**：支持将可视化搭建的页面导出为源代码
 
 **3. 组件化生态**
+
 - 丰富的官方组件库（小程序、移动端、PC端）
 - 支持自定义组件库接入
 - 组件插件化机制，易于扩展
 
 **4. 数据驱动**
+
 - 基于 JSON Schema 的页面描述协议
 - 完整的页面结构和交互逻辑描述
 - 支持版本管理和协同开发
 
 **5. 开发者友好**
+
 - 可视化编辑器 + 源码开发无缝切换
 - 完整的 TypeScript 类型支持
 - 插件系统支持（服务连接器、数据源等）
@@ -68,67 +73,84 @@ MyBricks IDE VSCode 插件将强大的 MyBricks.ai 可视化搭建平台完整�
 ### 前置要求
 
 - VSCode 版本 ≥ 1.60.0
-- Node.js（用于开发和打包）
-
-### 安装插件
-
-1. **从 VSIX 文件安装**
-   ```bash
-   # 打包插件
-   npm install -g vsce
-   vsce package
-   
-   # 在 VSCode 中安装
-   # Extensions -> ... -> Install from VSIX
-   ```
-
-2. **开发模式运行**
-   ```bash
-   # 克隆项目
-   git clone <repository-url>
-   cd mybricks-ide-as-vscode-plugin
-   
-   # 在 VSCode 中按 F5 启动调试
-   ```
+- Node.js (建议 v16+)
 
 ### 快速开始
 
-1. **启动插件**
-   - 安装插件后，VSCode 启动时会自动打开 MyBricks IDE
-   - 或点击左侧活动栏的 MyBricks 图标
-   - 或使用命令 `Open MyBricks IDE`
+1. **克隆项目**
 
-2. **创建页面**
-   - 点击工具栏的添加按钮
-   - 选择页面类型：小程序标签页/普通页面/对话框/网页
-   - 开始拖拽组件进行搭建
+   ```bash
+   git clone <repository-url>
+   cd mybricks-ide-as-vscode-plugin
+   ```
 
-3. **保存项目**
-   - 点击右上角"保存"按钮
-   - 项目数据自动保存到浏览器 localStorage
-   - 下次打开自动加载
+2. **安装依赖**
+
+   ```bash
+   npm install
+   ```
+
+3. **构建 Webview**
+
+   ```bash
+   # 必须先构建 webview，否则插件启动后会找不到页面资源
+   npm run build:webview
+   ```
+
+4. **调试运行**
+   - 在 VSCode 中打开本项目
+   - 按 `F5` 键启动 "Extension" 调试
+   - 在弹出的新窗口中，点击左侧 MyBricks 图标即可使用
+
+---
+
+## 🛠️ 调试与打包
+
+### 1. 本地调试
+
+- **Webview 实时开发**：运行 `npm run watch:webview`，修改 `src/webview` 代码后，在调试窗口执行 `Developer: Reload Window`。
+- **插件侧开发**：修改 `src/extension` 或 `extension.js` 后，需点击调试控制台的红色刷新按钮或执行 `Developer: Reload Window`。
+
+### 2. 插件打包
+
+- **第一步：构建资源**
+  ```bash
+  npm run build:webview
+  ```
+- **第二步：执行打包**
+  ```bash
+  # 如果没安装 vsce，先全局安装：npm install -g @vscode/vsce
+  vsce package
+  ```
+  打包后会生成 `mybricks-webview-x.x.x.vsix` 文件，可在 VSCode 中通过 "Install from VSIX" 安装。
+
+---
 
 ## 🏗️ 项目结构
 
 ```
 mybricks-ide-as-vscode-plugin/
-├── asserts/                    # 静态资源
-│   ├── antd@5.21.4.min.js     # Ant Design 组件库
-│   ├── cssinjs.min.js         # CSS-in-JS 支持
-│   ├── app.tsx                # 主应用入口
-│   ├── config.tsx             # MyBricks 配置文件
-│   ├── app.css                # 样式文件
-│   └── icon.svg               # 插件图标
-├── extension.js               # VSCode 扩展主入口
-├── webview.js                 # Webview 内容生成器
-├── webview.html               # Webview 页面模板
-├── package.json               # 项目配置
-└── README.md                  # 项目文档
+├── src/
+│   ├── extension/              # 插件侧代码 (Node.js 环境)
+│   │   ├── assets/             # 插件静态资源 (图标等)
+│   │   ├── webview/            # Webview 管理类 (MainManager, SidebarManager)
+│   │   ├── utils/              # 插件工具函数 (导出、保存逻辑)
+│   │   └── ...                 # 消息分发与生命周期钩子
+│   └── webview/                # Webview 侧代码 (浏览器环境)
+│       ├── pages/              # 页面入口 (主编辑器、侧边栏)
+│       ├── store/              # 状态管理
+│       └── utils/              # 通信工具
+├── dist/                       # Webview 构建产物 (Git 已忽略)
+├── extension.js                # 插件入口文件
+├── vite.config.ts              # Vite 构建配置
+├── .vscodeignore               # 插件打包忽略配置
+├── package.json                # 项目依赖与配置
+└── README.md                   # 项目文档
 ```
 
 ## ⚙️ 配置说明
 
-### MyBricks 配置项 (`asserts/config.tsx`)
+### MyBricks 配置项 (`src/webview/pages/main/config.tsx`)
 
 ```typescript
 {
@@ -151,6 +173,7 @@ mybricks-ide-as-vscode-plugin/
 ### 组件库配置
 
 默认加载小程序组件库：
+
 ```typescript
 comLibLoader() {
   return Promise.resolve([
@@ -164,27 +187,28 @@ comLibLoader() {
 ### 本地开发
 
 1. **启动开发环境**
+
    ```bash
    # 在 VSCode 中打开项目
    code .
-   
+
    # 按 F5 启动调试
    # 会打开一个新的 VSCode 窗口，插件已加载
    ```
 
 2. **修改代码**
    - `extension.js`：扩展主逻辑
-   - `asserts/app.tsx`：IDE 界面
-   - `asserts/config.tsx`：MyBricks 配置
-   - `webview.html`：Webview 模板
+   - `src/extension/`：插件侧功能模块
+   - `src/webview/pages/main/App.tsx`：IDE 界面
+   - `src/webview/pages/main/config.tsx`：MyBricks 配置
 
 3. **热重载**
-   - 修改 TypeScript/JavaScript 代码后，重新加载扩展窗口
-   - 使用 `Developer: Reload Window` 命令
+   - 修改 Webview 代码后，Vite 会自动重新构建（如果运行了 `npm run watch:webview`）
+   - 在调试窗口使用 `Developer: Reload Window` 命令
 
 ### 添加自定义组件库
 
-在 `asserts/config.tsx` 中配置：
+在 `src/webview/pages/main/config.tsx` 中配置：
 
 ```typescript
 comLibLoader(desc) {
@@ -198,12 +222,13 @@ comLibLoader(desc) {
 ### 添加自定义插件
 
 ```typescript
-import customPlugin from './plugins/custom-plugin';
+// src/webview/pages/main/config.tsx
+import customPlugin from './plugins/custom-plugin'
 
 {
   plugins: [
-    servicePlugin(),      // 服务连接器
-    customPlugin(),       // 你的自定义插件
+    servicePlugin(), // 服务连接器
+    customPlugin(), // 你的自定义插件
   ]
 }
 ```
@@ -249,6 +274,7 @@ import customPlugin from './plugins/custom-plugin';
 ### 侧边栏
 
 点击左侧活动栏的 MyBricks 图标，显示快捷入口：
+
 - 欢迎信息
 - 快速访问
 
@@ -257,6 +283,7 @@ import customPlugin from './plugins/custom-plugin';
 ### 内置插件
 
 **服务连接器插件** (`@mybricks/plugins/service`)
+
 - 提供 HTTP 接口调用能力
 - 支持 RESTful API 对接
 - 可视化接口配置
@@ -264,6 +291,7 @@ import customPlugin from './plugins/custom-plugin';
 ### 自定义插件开发
 
 参考 MyBricks 插件开发文档：
+
 ```typescript
 export default function customPlugin(options) {
   return {

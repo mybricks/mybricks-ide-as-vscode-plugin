@@ -1,1 +1,0 @@
-import"./modulepreload-polyfill-B5Qt9EMX.js";const o=window.acquireVsCodeApi();var e;(e=document.getElementById("openIDE"))==null||e.addEventListener("click",()=>{o.postMessage({command:"openIDE"})});
