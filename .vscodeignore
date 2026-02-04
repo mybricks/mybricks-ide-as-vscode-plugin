@@ -1,0 +1,13 @@
+.vscode/**
+.gitignore
+.vscodeignore
+README.md
+vite.config.ts
+package-lock.json
+src/webview/**
+demo-jetbrains/**
+*.vsix
+**/*.ts
+**/*.tsx
+**/*.map
+# 不要在这里忽略 node_modules，vsce 会根据 package.json 自动处理生产依赖
