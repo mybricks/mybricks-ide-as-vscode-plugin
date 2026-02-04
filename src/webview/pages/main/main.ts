@@ -2,7 +2,7 @@ import React from 'react'
 import * as ReactDOM from 'react-dom'
 import * as ReactDOMClient from 'react-dom/client'
 import * as antd from 'antd'
-import { getWebViewMessageAPI } from '../../utils/message'
+import { getWebViewMessageAPI } from '@/utils/message'
 
 // 1. 挂载全局变量。必须在加载 CDN 脚本之前完成，因为它们依赖这些全局变量。
 window.React = React

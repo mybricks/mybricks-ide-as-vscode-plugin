@@ -1,8 +1,10 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { ConfigProvider, message, Space } from 'antd'
 import type { NoticeType } from 'antd/es/message/interface'
-import { config as configFn } from './config'
-import { getWebViewMessageAPI } from '../../utils/message'
+import { config as configFn } from './modules/designer/config'
+import { getWebViewMessageAPI } from '@/utils/message'
+
+import './App.less'
 
 const ANTD_CONFIG = {
   theme: {

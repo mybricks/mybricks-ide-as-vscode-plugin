@@ -62,9 +62,13 @@
     "@types/vscode": "^1.60.0",
     "antd": "^5.22.7",
     "dayjs": "^1.11.13",
+    "less": "^4.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "vite": "^5.1.0"
+    "vite": "^5.1.0",
+    "@mybricks/sdk-for-app": "1.0.69",
+    "idb-keyval": "^6.2.1",
+    "rxui-t": "0.0.5"
   },
   "scripts": {
     "build:webview": "vite build",
