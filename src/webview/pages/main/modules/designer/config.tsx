@@ -288,9 +288,9 @@ export async function config({ ctx, designerRef, pageModel }: any) {
 
     // 编辑器配置面板
     editView: {
-      editorAppender(editConfig) {
-        return editorAppenderFn(editConfig, pageModel)
-      },
+      // editorAppender(editConfig) {
+      //   return editorAppenderFn(editConfig, pageModel)
+      // },
       // eslint-disable-next-line no-empty-pattern
       items({}, cate0, cate1, cate2) {
         cate0.title = '项目'
@@ -367,14 +367,15 @@ export async function config({ ctx, designerRef, pageModel }: any) {
                   return
                 }
 
-                if (item.host === pageModel.appConfig.defaultCallServiceHost) {
+                if (item.host === pageModel.appConfig?.defaultCallServiceHost) {
                   pageModel.appConfig.defaultCallServiceHost = undefined
                 }
               },
               customOptRender({ item, setList }) {
                 return (
                   <div style={{ display: 'flex', alignItems: 'center' }}>
-                    {pageModel.appConfig.defaultCallServiceHost === item.host &&
+                    {pageModel.appConfig?.defaultCallServiceHost ===
+                      item.host &&
                       item.host && (
                         <div
                           style={{
@@ -465,7 +466,8 @@ export async function config({ ctx, designerRef, pageModel }: any) {
 
             value: {
               get({ data, focusArea }) {
-                return pageModel.appConfig.hostList
+                console.log('>>>>pageModel', pageModel)
+                return pageModel?.appConfig?.hostList
               },
               set({ data, focusArea, output, input, ...res }, value) {
                 pageModel.appConfig.hostList = value
@@ -523,7 +525,7 @@ export async function config({ ctx, designerRef, pageModel }: any) {
               '直连模式下「服务接口」直接由浏览器发起网络请求，通常用于请求本地接口或者其他网络情况',
             value: {
               get() {
-                return pageModel.appConfig.directConnection
+                return pageModel.appConfig?.directConnection
               },
               set(_, value) {
                 pageModel.appConfig.directConnection = value
@@ -566,7 +568,7 @@ export async function config({ ctx, designerRef, pageModel }: any) {
         ]
       },
       editorOptions: mergeEditorOptions([
-        !!ctx.setting?.system.config?.isPureIntranet && LOCAL_EDITOR_ASSETS,
+        LOCAL_EDITOR_ASSETS,
         DESIGN_MATERIAL_EDITOR_OPTIONS(ctx),
       ]),
     },
