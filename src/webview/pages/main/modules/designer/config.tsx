@@ -5,11 +5,11 @@
 import { message } from 'antd'
 import { getWebViewMessageAPI } from '@/utils/message'
 import { tabbarModel } from '@/stores'
-
 import servicePlugin from '@mybricks/plugin-connector-http'
 import { editorAppenderFn } from './editorAppender'
 import { MpConfig } from './custom-configs'
 import { LOCAL_EDITOR_ASSETS } from '@/constants'
+import globalPrompt from '@/utils/global-prompt'
 
 const vsCodeMessage = getWebViewMessageAPI()!
 
@@ -400,7 +400,7 @@ export async function config({ ctx, designerRef, pageModel }: any) {
                         alignItems: 'center',
                         justifyContent: 'center',
                       }}
-                      onClick={(e) => {
+                      onClick={async (e) => {
                         e.stopPropagation()
 
                         const host = window.prompt(

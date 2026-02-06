@@ -46,6 +46,7 @@ export default function Designer({ appData }) {
   const config = useRef<any>(null)
   useEffect(() => {
     configFn({
+      appData,
       pageModel: window?.mybricks?.createObservable(pageModel),
       designerRef,
     }).then((_config: any) => {
