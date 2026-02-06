@@ -46,7 +46,7 @@ const render = async () => {
     )
 
     // 加载并渲染业务代码
-    const { default: App } = await import('./app')
+    const { default: App } = await import('./App')
     const rootEl = document.getElementById('root')
     if (rootEl) {
       const root = ReactDOMClient.createRoot(rootEl)

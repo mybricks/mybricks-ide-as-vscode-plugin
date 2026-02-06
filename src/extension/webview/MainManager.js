@@ -125,7 +125,7 @@ class MainManager {
     // 创建新面板
     this.currentPanel = vscode.window.createWebviewPanel(
       'mybricksWeb',
-      'MyBricks',
+      '低代码',
       vscode.ViewColumn.One,
       {
         enableScripts: true, // 允许运行 JS

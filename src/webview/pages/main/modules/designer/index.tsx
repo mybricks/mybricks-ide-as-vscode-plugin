@@ -5,7 +5,7 @@ import { config as configFn } from './config'
 import { getWebViewMessageAPI } from '@/utils/message'
 import { pageModel } from '@/stores'
 
-import './index.less'
+import styles from './index.less'
 
 const ANTD_CONFIG = {
   theme: {
@@ -92,17 +92,20 @@ export default function Designer({ appData }) {
 
   return (
     <ConfigProvider {...ANTD_CONFIG}>
-      <div className='ide'>
+      <div className={styles.ide}>
         {/* 顶部工具栏 */}
-        <div className='toolbar'>
-          <div className={'logo'}>MyBricks</div>
-          <div className={'btns'} id={'toolbarBtns'} />
+        <div className={styles.toolbar}>
+          <div className={styles.logo}>低代码</div>
+          <div className={styles.btns} id={'toolbarBtns'} />
           <Space>
-            <button className={'button primary'} onClick={save}>
+            <button
+              className={`${styles.button} ${styles.primary}`}
+              onClick={save}
+            >
               {changed ? '*' : ''}保存
             </button>
             <button
-              className={'button '}
+              className={styles.button}
               disabled={exportLoading}
               onClick={handleExport}
             >
@@ -112,7 +115,7 @@ export default function Designer({ appData }) {
         </div>
 
         {/* 设计器主区域 */}
-        <div className={'designer'}>
+        <div className={styles.designer}>
           {!SPADesigner && (
             <div style={{ padding: 20, textAlign: 'center' }}>
               设计器引擎加载中...
