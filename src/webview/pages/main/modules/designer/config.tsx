@@ -280,13 +280,49 @@ export async function config({ ctx, designerRef, pageModel }: any) {
           return title
         },
         // 调用连接器（HTTP 请求等）
-        callConnector(connector: any, params: any) {
+        callConnector(connector, params, connectorConfig) {
           const plugin = designerRef.current?.getPlugin(
             connector.connectorName || '@mybricks/plugins/service',
           )
 
           if (plugin) {
-            return plugin.callConnector(connector, params)
+            return plugin.callConnector(
+              {
+                ...connector,
+              },
+              params,
+              {
+                ...connectorConfig,
+                before(options) {
+                  let newOptions = { ...options }
+
+                  newOptions.headers = newOptions.headers || {}
+                  let mybricksGlobalHeaders: any =
+                    localStorage.getItem('_MYBRICKS_GLOBAL_HEADERS_') ||
+                    '{"data": {}}'
+                  mybricksGlobalHeaders = JSON.parse(mybricksGlobalHeaders)
+
+                  // 优先级应该是请求头 > 全局请求头
+                  newOptions.headers = {
+                    ...mybricksGlobalHeaders.data,
+                    ...newOptions.headers,
+                  }
+
+                  /**
+                   * 如果 url 不以 http 开头，添加默认域名
+                   */
+                  if (
+                    !/^(http|https):\/\/.*/.test(newOptions.url) &&
+                    pageModel.appConfig.defaultCallServiceHost
+                  ) {
+                    newOptions.url = `${pageModel.appConfig.defaultCallServiceHost}${newOptions.url}`
+                  }
+                  // end
+
+                  return newOptions
+                },
+              },
+            )
           } else {
             return Promise.reject('错误的连接器类型.')
           }
