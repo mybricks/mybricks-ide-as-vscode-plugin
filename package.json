@@ -56,24 +56,35 @@
   "devDependencies": {
     "@ant-design/icons": "^4.7.0",
     "@mybricks/plugin-connector-http": "^1.2.36",
+    "@mybricks/rxui": "^1.0.87",
+    "@mybricks/sdk-for-app": "1.0.69",
     "@types/node": "^20.0.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "@types/vscode": "^1.60.0",
     "antd": "^5.22.7",
+    "clean-webpack-plugin": "^4.0.0",
+    "css-loader": "^7.1.3",
     "dayjs": "^1.11.13",
+    "html-webpack-plugin": "^5.6.6",
+    "idb-keyval": "^6.2.1",
     "less": "^4.2.0",
+    "less-loader": "^12.3.0",
+    "mini-css-extract-plugin": "^2.10.0",
+    "path-browserify": "^1.0.1",
+    "process": "^0.11.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "rxui-t": "0.0.5",
+    "style-loader": "^4.0.0",
+    "ts-loader": "^9.5.4",
     "vite": "^5.1.0",
-    "@mybricks/rxui": "^1.0.87",
-    "@mybricks/sdk-for-app": "1.0.69",
-    "idb-keyval": "^6.2.1",
-    "rxui-t": "0.0.5"
+    "webpack": "^5.105.0",
+    "webpack-cli": "^6.0.1"
   },
   "scripts": {
-    "build:webview": "vite build",
-    "watch:webview": "vite build --watch",
+    "build:webview": "webpack --mode production",
+    "watch:webview": "webpack --mode development --watch",
     "build:vsix": "if not exist unpackage mkdir unpackage && vsce package --out ./unpackage"
   }
 }

@@ -15,7 +15,7 @@ class SidebarManager {
    */
   getWebviewContent(webview, extensionUri) {
     const distDirUri = vscode.Uri.joinPath(extensionUri, 'dist', 'webview')
-    const distIndexPath = path.join(distDirUri.fsPath, 'sidebar', 'index.html')
+    const distIndexPath = path.join(distDirUri.fsPath, 'sidebar.html') // Removed 'sidebar' subdirectory
 
     if (!fs.existsSync(distIndexPath)) {
       return `
@@ -31,12 +31,23 @@ class SidebarManager {
 
     let htmlContent = fs.readFileSync(distIndexPath, 'utf8')
 
-    // 将 ../assets/...（Vite 构建产物）路径转成 webview 资源 URI
+    // 1. 处理 Webpack 输出的相对路径引用 assets/xxx.js -> vscode-webview://.../assets/xxx.js
     htmlContent = htmlContent.replace(
-      /\.\.\/assets\/([^"'\s)]+)/g,
-      (_, relPath) => {
-        const resourceUri = vscode.Uri.joinPath(distDirUri, 'assets', relPath)
-        return webview.asWebviewUri(resourceUri).toString()
+      /(src|href)=["'](assets\/[^"']+)["']/g,
+      (_, attr, relPath) => {
+        const resourceUri = vscode.Uri.joinPath(distDirUri, relPath)
+        const webviewUri = webview.asWebviewUri(resourceUri).toString()
+        return `${attr}="${webviewUri}"`
+      },
+    )
+
+    // 2. 处理 publicPath: './' 产生的引用 (例如: ./assets/xxx.js)
+    htmlContent = htmlContent.replace(
+      /(src|href)=["']\.\/(assets\/[^"']+)["']/g,
+      (_, attr, relPath) => {
+        const resourceUri = vscode.Uri.joinPath(distDirUri, relPath)
+        const webviewUri = webview.asWebviewUri(resourceUri).toString()
+        return `${attr}="${webviewUri}"`
       },
     )
 

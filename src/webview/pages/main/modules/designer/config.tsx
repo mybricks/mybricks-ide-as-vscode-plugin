@@ -288,9 +288,9 @@ export async function config({ ctx, designerRef, pageModel }: any) {
 
     // 编辑器配置面板
     editView: {
-      // editorAppender(editConfig) {
-      //   return editorAppenderFn(editConfig, pageModel)
-      // },
+      editorAppender(editConfig) {
+        return editorAppenderFn(editConfig, pageModel)
+      },
       // eslint-disable-next-line no-empty-pattern
       items({}, cate0, cate1, cate2) {
         cate0.title = '项目'

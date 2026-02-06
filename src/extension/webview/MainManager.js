@@ -19,7 +19,7 @@ class MainManager {
    */
   getWebviewContent(webview, extensionUri) {
     const distDirUri = vscode.Uri.joinPath(extensionUri, 'dist', 'webview')
-    const distIndexPath = path.join(distDirUri.fsPath, 'main', 'index.html')
+    const distIndexPath = path.join(distDirUri.fsPath, 'index.html') // Removed 'main' subdirectory
 
     if (!fs.existsSync(distIndexPath)) {
       return `
@@ -36,13 +36,40 @@ class MainManager {
 
     let htmlContent = fs.readFileSync(distIndexPath, 'utf8')
 
-    // 将 ./assets/...（Vite 构建产物）路径转成 webview 资源 URI
+    // 1. 处理 Webpack 输出的相对路径引用 assets/xxx.js -> vscode-webview://.../assets/xxx.js
     htmlContent = htmlContent.replace(
-      /\.\.\/assets\/([^"'\s)]+)/g,
-      (_, relPath) => {
-        const resourceUri = vscode.Uri.joinPath(distDirUri, 'assets', relPath)
-        return webview.asWebviewUri(resourceUri).toString()
+      /(src|href)=["'](assets\/[^"']+)["']/g,
+      (_, attr, relPath) => {
+        // 使用 path.join 可能会使用反斜杠，在 URI 中应始终使用正斜杠
+        const resourceUri = vscode.Uri.joinPath(distDirUri, relPath)
+        const webviewUri = webview.asWebviewUri(resourceUri).toString()
+        return `${attr}="${webviewUri}"`
       },
+    )
+
+    // 2. 处理 publicPath: './' 产生的引用 (例如: ./assets/xxx.js)
+    htmlContent = htmlContent.replace(
+      /(src|href)=["']\.\/(assets\/[^"']+)["']/g,
+      (_, attr, relPath) => {
+        const resourceUri = vscode.Uri.joinPath(distDirUri, relPath)
+        const webviewUri = webview.asWebviewUri(resourceUri).toString()
+        return `${attr}="${webviewUri}"`
+      },
+    )
+
+    // 3. 处理 Webpack 动态加载 Chunk 的 publicPath 问题 (关键修复)
+    // 注入一个脚本，在运行时修正 window.__webpack_public_path__
+    // 使得动态加载的 chunk (如 vendors, src_webview_pages...) 能正确指向 vscode-webview 资源路径
+    // 注意：需要确保路径以 / 结尾，否则拼接资源时会出错
+    const assetsUri = webview.asWebviewUri(distDirUri)
+    htmlContent = htmlContent.replace(
+      '<head>',
+      `<head>
+      <script>
+        window.mybricks_public_path = "${assetsUri.toString()}/";
+        window.__webpack_public_path__ = "${assetsUri.toString()}/";
+      </script>
+      `,
     )
 
     // 将 ./node_modules/... 路径转成 webview 资源 URI
