@@ -30,7 +30,7 @@
       "activitybar": [
         {
           "id": "mybricks-sidebar",
-          "title": "MyBricks",
+          "title": "低代码",
           "icon": "asserts/icon.svg"
         }
       ]
@@ -40,7 +40,7 @@
         {
           "type": "webview",
           "id": "mybricks.ide",
-          "name": "MyBricks IDE",
+          "name": "低代码",
           "visibility": "hidden"
         }
       ]

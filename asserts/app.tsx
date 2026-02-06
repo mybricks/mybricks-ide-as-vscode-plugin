@@ -107,7 +107,7 @@ function App() {
         } else {
           onMessage(
             'error',
-            typeof res.message === 'string' ? res.message : '导出失败'
+            typeof res.message === 'string' ? res.message : '导出失败',
           )
         }
       })
@@ -121,7 +121,7 @@ function App() {
       <div className='ide'>
         {/* 顶部工具栏 */}
         <div className='toolbar'>
-          <div className={'logo'}>MyBricks</div>
+          <div className={'logo'}>低代码</div>
           <div className={'btns'} id={'toolbarBtns'} />
           <Space>
             <button className={'button primary'} onClick={save}>

@@ -28,10 +28,10 @@ class WebviewPanel {
         const resourceUri = vscode.Uri.joinPath(
           extensionUri,
           'asserts',
-          relPath
+          relPath,
         )
         return webview.asWebviewUri(resourceUri).toString()
-      }
+      },
     )
 
     // 将 ./node_modules/... 路径转成 webview 资源 URI
@@ -41,10 +41,10 @@ class WebviewPanel {
         const resourceUri = vscode.Uri.joinPath(
           extensionUri,
           'node_modules',
-          relPath
+          relPath,
         )
         return webview.asWebviewUri(resourceUri).toString()
-      }
+      },
     )
 
     return htmlContent
@@ -64,7 +64,7 @@ class WebviewPanel {
       this.currentPanel.reveal(vscode.ViewColumn.One)
       this.currentPanel.webview.html = this.getWebviewContent(
         this.currentPanel.webview,
-        extensionUri
+        extensionUri,
       )
       return this.currentPanel
     }
@@ -72,7 +72,7 @@ class WebviewPanel {
     // 创建新面板
     this.currentPanel = vscode.window.createWebviewPanel(
       'mybricksWeb',
-      'MyBricks',
+      '低代码',
       vscode.ViewColumn.One,
       {
         enableScripts: true, // 允许运行 JS
@@ -83,12 +83,12 @@ class WebviewPanel {
           vscode.Uri.joinPath(extensionUri, 'node_modules'),
           extensionUri,
         ],
-      }
+      },
     )
 
     this.currentPanel.webview.html = this.getWebviewContent(
       this.currentPanel.webview,
-      extensionUri
+      extensionUri,
     )
 
     // 创建消息 API 实例
