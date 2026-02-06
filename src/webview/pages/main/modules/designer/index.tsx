@@ -20,7 +20,7 @@ const vsCodeMessage = getWebViewMessageAPI()!
 /**
  * MyBricks 主应用入口
  */
-export default function Designer({ appData }) {
+export default function Designer() {
   // 动态获取设计器组件，确保渲染时引擎已就绪
   const { SPADesigner } = (window.mybricks || {}) as any
   // 内容变更计数
@@ -46,7 +46,6 @@ export default function Designer({ appData }) {
   const config = useRef<any>(null)
   useEffect(() => {
     configFn({
-      appData,
       pageModel: window?.mybricks?.createObservable(pageModel),
       designerRef,
     }).then((_config: any) => {

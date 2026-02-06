@@ -23,6 +23,10 @@ export async function config({ ctx, designerRef, pageModel }: any) {
   // tabbar
   tabbarModel.initFromFileContent(fileContent)
 
+  // 应用配置
+  pageModel.appConfig = fileContent?.extra?.appConfig || {}
+  pageModel.wxConfig = fileContent?.extra?.wxConfig || {}
+
   return {
     version: new Date().getTime(), // 版本号
     type: 'mpa', // 多页应用模式
@@ -58,6 +62,7 @@ export async function config({ ctx, designerRef, pageModel }: any) {
         }
 
         const dumped = designerRef.current.dump(true, true)
+        console.log('>>>>pageModel', pageModel)
 
         if (!dumped) {
           message.error('无法获取设计器数据')
@@ -117,6 +122,9 @@ export async function config({ ctx, designerRef, pageModel }: any) {
         }
 
         if (!saveContent.extra) saveContent.extra = {}
+        saveContent.extra.appConfig = pageModel.appConfig
+        saveContent.extra.wxConfig = pageModel.wxConfig
+
         // tabbar
         const tabbar = tabbarModel.get()
         saveContent.extra.tabbar = tabbar
@@ -403,27 +411,32 @@ export async function config({ ctx, designerRef, pageModel }: any) {
                       onClick={async (e) => {
                         e.stopPropagation()
 
-                        const host = window.prompt(
-                          '请输入域名，使用 https:// 或 http:// 开头',
-                          item.host,
-                        )
+                        // const host = window.prompt(
+                        //   '请输入域名，使用 https:// 或 http:// 开头',
+                        //   item.host,
+                        // )
+                        const host = await globalPrompt({
+                          title: '请输入域名，使用 https:// 或 http:// 开头',
+                          content: item.host,
+                          validate: (value) => {
+                            // 校验域名
+                            if (value && !/^https?:\/\/.*/.test(value)) {
+                              return '请输入正确的域名'
+                            }
 
-                        // 校验域名
-                        if (host && !/^https?:\/\/.*/.test(host)) {
-                          alert('请输入正确的域名')
-                          return
-                        }
+                            // 重复域名校验
+                            if (
+                              value &&
+                              pageModel.appConfig.hostList.find(
+                                (hostItem) => hostItem.host === value,
+                              )
+                            ) {
+                              return '域名已存在'
+                            }
 
-                        // 重复域名校验
-                        if (
-                          host &&
-                          pageModel.appConfig.hostList.find(
-                            (hostItem) => hostItem.host === host,
-                          )
-                        ) {
-                          alert('域名已存在')
-                          return
-                        }
+                            return ''
+                          },
+                        })
 
                         if (host) {
                           setList((c) =>
@@ -466,7 +479,6 @@ export async function config({ ctx, designerRef, pageModel }: any) {
 
             value: {
               get({ data, focusArea }) {
-                console.log('>>>>pageModel', pageModel)
                 return pageModel?.appConfig?.hostList
               },
               set({ data, focusArea, output, input, ...res }, value) {
@@ -475,101 +487,10 @@ export async function config({ ctx, designerRef, pageModel }: any) {
             },
           },
         ]
-
-        cate1.title = '调试'
-        cate1.items = [
-          {
-            title: '注意',
-            type: 'editorRender',
-            options: {
-              render: () => {
-                return (
-                  <div
-                    style={{
-                      color: '#333333',
-                      padding: 12,
-                      fontSize: 12,
-                      lineHeight: 1.5,
-                      background: '#ffffff',
-                      borderColor: '#f0f0f0',
-                      borderStyle: 'solid',
-                      borderWidth: 1,
-                      borderRadius: 3,
-                    }}
-                  >
-                    以下配置仅在
-                    <span
-                      style={{
-                        fontWeight: 700,
-                        color: '#ea732e',
-                        marginLeft: 2,
-                        marginRight: 2,
-                      }}
-                    >
-                      调试时
-                    </span>
-                    作为默认值生效，并且可能被其他组件的设置所覆盖。在
-                    <span style={{ fontWeight: 500 }}>预览</span>、
-                    <span style={{ fontWeight: 500 }}>发布</span>、
-                    <span style={{ fontWeight: 500 }}>编译到本地等</span>
-                    情况下均失效。
-                  </div>
-                )
-              },
-            },
-          },
-          {
-            title: '连接器直连（仅在调试模式下生效）',
-            type: 'Switch',
-            description:
-              '直连模式下「服务接口」直接由浏览器发起网络请求，通常用于请求本地接口或者其他网络情况',
-            value: {
-              get() {
-                return pageModel.appConfig?.directConnection
-              },
-              set(_, value) {
-                pageModel.appConfig.directConnection = value
-              },
-            },
-          },
-          {
-            title: '默认全局请求头（仅在调试模式下生效）',
-            description: '每当页面刷新时会，将会在每次请求时自动携带',
-            type: 'code',
-            options: ({ data, output }) => {
-              return {
-                language: 'json',
-              }
-            },
-            value: {
-              get() {
-                return pageModel?.debug?.mybricksGlobalHeaders
-              },
-              set(context, val) {
-                pageModel.debug.mybricksGlobalHeaders = val
-
-                let data
-                try {
-                  data = decodeURIComponent(val)
-                  data = JSON.parse(data)
-                } catch (e) {
-                  data = {}
-                }
-
-                try {
-                  localStorage.setItem(
-                    '_MYBRICKS_GLOBAL_HEADERS_',
-                    JSON.stringify({ data }),
-                  )
-                } catch (e) {}
-              },
-            },
-          },
-        ]
       },
       editorOptions: mergeEditorOptions([
         LOCAL_EDITOR_ASSETS,
-        DESIGN_MATERIAL_EDITOR_OPTIONS(ctx),
+        DESIGN_MATERIAL_EDITOR_OPTIONS(),
       ]),
     },
   }
@@ -590,46 +511,11 @@ export function mergeEditorOptions(
   return options
 }
 
-export const DESIGN_MATERIAL_EDITOR_OPTIONS = (ctx) => {
+export const DESIGN_MATERIAL_EDITOR_OPTIONS = () => {
   return {
     imageselector: {
       fileSizeLimit: 2 * 1024,
-      extras: [
-        {
-          title: '选择素材',
-          key: 'MaterialCenter',
-          event() {
-            return new Promise((resolve) => {
-              ctx.sdk.openUrl({
-                url: 'MYBRICKS://mybricks-material/materialSelectorPage',
-                params: {
-                  userId: ctx.user?.id,
-                  combo: false,
-                  title: '选择图片素材',
-                  type: 'picture',
-                  tags: ['image'],
-                },
-                onSuccess: async ({ materials }) => {
-                  function getBaseUrl(url) {
-                    try {
-                      const parsedUrl = new URL(url)
-                      return `${parsedUrl.protocol}//${parsedUrl.host}`
-                    } catch (e) {
-                      console.error('Invalid URL:', e)
-                      return null
-                    }
-                  }
-                  if (materials.length > 0) {
-                    let url = window.location.href
-                    const baseUrl = getBaseUrl(url)
-                    resolve(baseUrl + materials[0].preview_img)
-                  }
-                },
-              })
-            })
-          },
-        },
-      ],
+      extras: [],
     },
   }
 }

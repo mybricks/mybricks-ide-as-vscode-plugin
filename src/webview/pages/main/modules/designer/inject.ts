@@ -1,7 +1,10 @@
 import axios from 'axios'
 
+const uploadBaseURL = 'https://my.mybricks.world'
+
 const upload = async (files, uploadConfig) => {
-  const API = `${uploadConfig.baseURL || ''}/paas/api/oss/uploadFile`
+  // const API = `${uploadConfig.baseURL || ''}/paas/api/oss/uploadFile`
+  const API = `${uploadBaseURL}/paas/api/oss/uploadFile`
 
   const formData = new FormData()
   formData.append('file', files[0])
