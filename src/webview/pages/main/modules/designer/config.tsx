@@ -8,7 +8,6 @@ import { tabbarModel } from '@/stores'
 import servicePlugin from '@mybricks/plugin-connector-http'
 import { editorAppenderFn } from './editorAppender'
 import { MpConfig } from './custom-configs'
-import { LOCAL_EDITOR_ASSETS } from '@/constants'
 import globalPrompt from '@/utils/global-prompt'
 
 const vsCodeMessage = getWebViewMessageAPI()!
@@ -524,10 +523,7 @@ export async function config({ ctx, designerRef, pageModel }: any) {
           },
         ]
       },
-      editorOptions: mergeEditorOptions([
-        LOCAL_EDITOR_ASSETS,
-        DESIGN_MATERIAL_EDITOR_OPTIONS(),
-      ]),
+      editorOptions: mergeEditorOptions([DESIGN_MATERIAL_EDITOR_OPTIONS()]),
     },
   }
 }
