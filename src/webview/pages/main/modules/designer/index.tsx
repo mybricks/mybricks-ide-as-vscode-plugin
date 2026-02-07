@@ -69,10 +69,10 @@ export default function Designer() {
       withDiagrams: true,
       withIOSchema: true,
     })
-    console.log('configJson', configJson)
     vsCodeMessage
       .call('exportProject', {
         configJson,
+        pageModel,
       })
       .then((res: { success: boolean; message: string }) => {
         console.log('>>>>>导出结果', res)

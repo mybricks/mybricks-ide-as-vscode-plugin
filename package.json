@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@ant-design/icons": "^4.7.0",
-    "@mybricks/plugin-connector-http": "^1.2.36",
+    "@mybricks/plugin-connector-http": "^1.2.37",
     "@mybricks/rxui": "^1.0.87",
     "@mybricks/sdk-for-app": "1.0.69",
     "@types/node": "^20.0.0",
