@@ -317,8 +317,8 @@ export async function config({ ctx, designerRef, pageModel }: any) {
             return plugin.callConnector(
               {
                 ...connector,
-                proxyUrl: 'https://my.mybricks.world/mybricks-app-mpsite',
-                // useProxy: false,
+                // proxyUrl: 'https://my.mybricks.world/mybricks-app-mpsite',
+                useProxy: false,
               },
               params,
               {
@@ -341,10 +341,11 @@ export async function config({ ctx, designerRef, pageModel }: any) {
                   /**
                    * 如果 url 不以 http 开头，添加默认域名
                    */
-                  if (
-                    !/^(http|https):\/\/.*/.test(newOptions.url) &&
-                    pageModel.appConfig.defaultCallServiceHost
-                  ) {
+                  if (!/^(http|https):\/\/.*/.test(newOptions.url)) {
+                    if (!pageModel.appConfig.defaultCallServiceHost) {
+                      message.error('请先添加接口默认域名')
+                      return {}
+                    }
                     newOptions.url = `${pageModel.appConfig.defaultCallServiceHost}${newOptions.url}`
                   }
                   // end
@@ -369,22 +370,22 @@ export async function config({ ctx, designerRef, pageModel }: any) {
       items({}, cate0, cate1, cate2) {
         cate0.title = '项目'
         cate0.items = [
-          {
-            title: '绑定微信小程序',
-            items: [
-              {
-                type: 'editorRender',
-                // ifVisible: ({ data }) => {
-                //   return isDesignFilePlatform('miniprogram')
-                // },
-                options: {
-                  render: () => {
-                    return <MpConfig />
-                  },
-                },
-              },
-            ],
-          },
+          // {
+          //   title: '绑定微信小程序',
+          //   items: [
+          //     {
+          //       type: 'editorRender',
+          //       // ifVisible: ({ data }) => {
+          //       //   return isDesignFilePlatform('miniprogram')
+          //       // },
+          //       options: {
+          //         render: () => {
+          //           return <MpConfig />
+          //         },
+          //       },
+          //     },
+          //   ],
+          // },
           {
             title: '接口默认域名',
             description:
