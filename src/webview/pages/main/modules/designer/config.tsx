@@ -289,6 +289,7 @@ export async function config({ ctx, designerRef, pageModel }: any) {
               {
                 ...connector,
                 proxyUrl: 'https://my.mybricks.world/mybricks-app-mpsite',
+                // useProxy: false,
               },
               params,
               {

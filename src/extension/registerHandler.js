@@ -20,8 +20,8 @@ function registerHandlers(messageApiInstance, context) {
 
   // 导出项目
   messageApiInstance.registerHandler('exportProject', async (data) => {
-    const { configJson, pageModel } = data
-    const res = await exportProject(context, configJson, pageModel)
+    const { configJson, rootConfig } = data
+    const res = await exportProject(context, configJson, rootConfig)
     return res
   })
 }
