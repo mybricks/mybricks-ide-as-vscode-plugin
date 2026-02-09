@@ -30,6 +30,11 @@ module.exports = (env, argv) => {
         process: require.resolve('process/browser'),
       },
     },
+    externals: [
+      {
+        '@mybricks/ai-utils': 'mybricks_ai_utils',
+      },
+    ],
     module: {
       rules: [
         {

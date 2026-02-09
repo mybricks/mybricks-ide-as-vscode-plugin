@@ -9,8 +9,13 @@ import servicePlugin from '@mybricks/plugin-connector-http'
 import { editorAppenderFn } from './editorAppender'
 import { MpConfig } from './custom-configs'
 import globalPrompt from '@/utils/global-prompt'
+import AIPlugin from './utils/get-ai-plugin'
+import aiViewConfig from './configs/aiView'
+import { getAIResponse } from './utils/get-ai-response'
 
 const vsCodeMessage = getWebViewMessageAPI()!
+const DEFAULT_AI_MODEL = 'deepseek-chat'
+const DEFAULT_MODEL = 'google/gemini-2.5-flash'
 
 /**
  * 生成设计器配置
@@ -29,6 +34,10 @@ export async function config({ ctx, designerRef, pageModel }: any) {
   pageModel.appConfig = fileContent?.extra?.appConfig || {}
   pageModel.wxConfig = fileContent?.extra?.wxConfig || {}
 
+  const aiViewConfig = getAiView(true, {
+    model: DEFAULT_AI_MODEL,
+  })
+
   return {
     version: new Date().getTime(), // 版本号
     type: 'mpa', // 多页应用模式
@@ -37,6 +46,18 @@ export async function config({ ctx, designerRef, pageModel }: any) {
         isPrivatization: false,
         pure: true, //连接器输出配置
       }), // HTTP 接口连接器
+      AIPlugin({
+        key: pageModel?.fileId,
+        user: {
+          // name: appData.user.name || appData.user.email || 'user',
+          // avatar: appData.user.avatar,
+        },
+        requestAsStream: ({ messages, emits, aiRole }) => {
+          return aiViewConfig?.requestAsStream(messages, undefined, emits, {
+            aiRole,
+          })
+        },
+      }),
     ],
 
     // 组件库添加器（预留）
@@ -276,6 +297,8 @@ export async function config({ ctx, designerRef, pageModel }: any) {
       fx: {}, // 函数配置
       useStrict: false, // 非严格模式
     },
+
+    aiView: aiViewConfig,
 
     // 组件运行环境配置
     com: {
@@ -558,4 +581,102 @@ export const DESIGN_MATERIAL_EDITOR_OPTIONS = () => {
       extras: [],
     },
   }
+}
+
+function getDesignerParams(args) {
+  let context = args[0]
+  let tools = undefined
+  let extraOption = {}
+
+  if (args.length === 2) {
+    tools = args[0]
+    context = args[1]
+  }
+
+  if (args.length === 3) {
+    tools = args[0]
+    context = args[1]
+    extraOption = args[2]
+  }
+
+  let model = DEFAULT_MODEL,
+    role
+
+  switch (true) {
+    case extraOption?.expert === 'image': {
+      model = 'anthropic/claude-sonnet-4'
+      role = 'image'
+      break
+    }
+    case ['image'].includes(extraOption?.aiRole): {
+      model = 'anthropic/claude-sonnet-4'
+      role = 'image'
+      break
+    }
+    case ['architect'].includes(extraOption.aiRole): {
+      model = 'google/gemini-2.5-pro-preview'
+      // model = 'openai/gpt-4.1'
+      // model = 'deepseek/deepseek-r1-0528'
+      role = 'architect'
+      break
+    }
+    case ['expert'].includes(extraOption.aiRole): {
+      model = 'anthropic/claude-sonnet-4'
+      role = 'expert'
+      break
+    }
+    default: {
+      role = 'default'
+      break
+    }
+  }
+
+  return {
+    context: context ?? {},
+    tools,
+    model,
+    role,
+  }
+}
+
+const getAiView = (enableAI, option) => {
+  const { model } = option ?? {}
+
+  if (enableAI) {
+    return {
+      ...aiViewConfig,
+      async requestAsStream(messages, ...args) {
+        const { context, tools, model, role } = getDesignerParams(args)
+        const { write, complete, error, cancel } = context ?? {}
+        // 用于debug用户当前使用的模型
+        window._ai_use_model_ = model
+
+        try {
+          const { abort } = await getAIResponse(
+            {
+              model,
+              messages,
+              role,
+              tools,
+            },
+            {
+              onMessage: (chunk) => {
+                write(chunk)
+              },
+              onComplete: (content) => {
+                complete()
+              },
+              devMode: false,
+            },
+          )
+
+          cancel?.(abort)
+        } catch (ex) {
+          error(ex)
+        }
+      },
+    }
+  }
+
+  return void 0
 }

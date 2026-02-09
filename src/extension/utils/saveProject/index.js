@@ -16,7 +16,11 @@ function getFileContent(context) {
     return null
   }
   const content = fs.readFileSync(filePath, 'utf8')
-  return JSON.parse(content)
+  try {
+    return JSON.parse(content)
+  } catch (error) {
+    return null
+  }
 }
 
 /**

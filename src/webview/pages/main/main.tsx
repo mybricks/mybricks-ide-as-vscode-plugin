@@ -44,6 +44,9 @@ const render = async () => {
     await loadScript(
       'https://p66-ec.becukwai.com/udata/pkg/eshop/myk-dev/plugin2.js',
     )
+    await loadScript(
+      'https://my.mybricks.world/mybricks-app-mpsite/public/ai-utils/1.0.3/index.umd.js',
+    )
 
     // 加载并渲染业务代码
     const { default: App } = await import('./App')

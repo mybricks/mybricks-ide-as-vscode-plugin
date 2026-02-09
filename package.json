@@ -80,7 +80,8 @@
     "ts-loader": "^9.5.4",
     "vite": "^5.1.0",
     "webpack": "^5.105.0",
-    "webpack-cli": "^6.0.1"
+    "webpack-cli": "^6.0.1",
+    "@mybricks/plugin-ai": "^0.0.1"
   },
   "scripts": {
     "build:webview": "webpack --mode production",
