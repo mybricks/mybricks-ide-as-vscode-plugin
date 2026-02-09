@@ -72,7 +72,14 @@ export default function Designer() {
     vsCodeMessage
       .call('exportProject', {
         configJson,
-        pageModel,
+        rootConfig: {
+          status: {
+            apiEnv: 'prod',
+            ...pageModel.appConfig,
+            appid: pageModel.wxConfig.appid,
+            appsecret: pageModel.wxConfig.appsecret,
+          },
+        },
       })
       .then((res: { success: boolean; message: string }) => {
         console.log('>>>>>导出结果', res)

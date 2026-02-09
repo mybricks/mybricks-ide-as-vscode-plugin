@@ -13,10 +13,10 @@ const EXPORT_DIR = ''
 /**
  * 导出
  */
-async function exportProject(context, configJson, pageModel) {
+async function exportProject(context, configJson, rootConfig) {
   console.log('>>>传给出码的数据', {
     ...configJson,
-    pageModel,
+    rootConfig,
   })
   const defaultUri = getWorkspaceFolder(context)
   try {
@@ -24,7 +24,7 @@ async function exportProject(context, configJson, pageModel) {
       toCodeTaro(
         {
           ...configJson,
-          pageModel,
+          rootConfig,
         },
         taroConfig,
       ),
