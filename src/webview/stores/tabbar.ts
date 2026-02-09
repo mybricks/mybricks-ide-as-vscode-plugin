@@ -1,48 +1,52 @@
-/**
- * Tabbar Store
- */
+import { observable } from 'rxui-t'
+import logger from '@/utils/logger'
 
-export class TabbarModel {
-  private tabbar: any[] = []
-  private handlers: { key: string; handler: Function }[] = []
+class Tabbar {
+  initFromFileContent = (fileContent) => {
+    let tabbar = fileContent?.extra?.tabbar || []
+    logger('tabbar').log('初始化', tabbar)
 
-  initFromFileContent = (fileContent: any) => {
-    this.tabbar =
-      (fileContent && fileContent.extra && fileContent.extra.tabbar) || []
-    console.log('tabbar初始化', this.tabbar)
-    this.notify()
-  }
+    // 事件监听列表
+    let handlers = []
 
-  get = () => {
-    return this.tabbar
-  }
+    // 全局事件
+    ;(window as any).__tabbar__ = {}
 
-  set = (value: any[]) => {
-    this.tabbar = value
-    this.notify()
-  }
+    // 获取 tabbar
+    window.__tabbar__.get = () => {
+      return tabbar
+    }
 
-  remove = (id: string | number) => {
-    this.tabbar = this.tabbar.filter((item) => item.scene.id !== id)
-    this.notify()
-  }
+    // 增加 tabbar
+    window.__tabbar__.set = (value) => {
+      tabbar = value
+      handlers.forEach((item) => {
+        item.handler(tabbar)
+      })
+    }
 
-  on = (key: string, handler: Function) => {
-    this.handlers.push({
-      key,
-      handler,
-    })
-  }
+    // 删除 tabbar 项
+    window.__tabbar__.remove = (id) => {
+      tabbar = tabbar.filter((item) => item.scene.id !== id)
 
-  off = (key: string) => {
-    this.handlers = this.handlers.filter((item) => item.key !== key)
-  }
+      handlers.forEach((item) => {
+        item.handler(tabbar)
+      })
+    }
 
-  private notify = () => {
-    this.handlers.forEach((item) => {
-      item.handler(this.tabbar)
-    })
+    // 监听 tabbar
+    window.__tabbar__.on = (key, handler) => {
+      handlers.push({
+        key,
+        handler,
+      })
+    }
+
+    // 取消监听 tabbar
+    window.__tabbar__.off = (key) => {
+      handlers = handlers.filter((item) => item.key !== key)
+    }
   }
 }
 
-export const tabbarModel = new TabbarModel()
+export const tabbarModel: Tabbar = observable(new Tabbar())

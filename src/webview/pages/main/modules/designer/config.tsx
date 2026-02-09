@@ -4,7 +4,7 @@
  */
 import { message } from 'antd'
 import { getWebViewMessageAPI } from '@/utils/message'
-import { tabbarModel } from '@/stores'
+import { tabbarModel, EntryPagePath } from '@/stores'
 import servicePlugin from '@mybricks/plugin-connector-http'
 import { editorAppenderFn } from './editorAppender'
 import { MpConfig } from './custom-configs'
@@ -18,6 +18,9 @@ const vsCodeMessage = getWebViewMessageAPI()!
 export async function config({ ctx, designerRef, pageModel }: any) {
   // 读取低码项目内容
   const fileContent = await vsCodeMessage.call('getFileContent')
+
+  // 首页配置
+  new EntryPagePath(fileContent?.extra?.entryPagePath || '')
 
   // tabbar
   tabbarModel.initFromFileContent(fileContent)
@@ -125,8 +128,11 @@ export async function config({ ctx, designerRef, pageModel }: any) {
         saveContent.extra.wxConfig = pageModel.wxConfig
 
         // tabbar
-        const tabbar = tabbarModel.get()
+        const tabbar = window.__tabbar__.get()
         saveContent.extra.tabbar = tabbar
+
+        // 首页配置
+        saveContent.extra.entryPagePath = window.__entryPagePath__.get()
 
         // 通知 VS Code 保存文件
         await vsCodeMessage.call('saveFileContent', saveContent)
