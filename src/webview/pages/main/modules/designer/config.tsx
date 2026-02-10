@@ -12,6 +12,7 @@ import globalPrompt from '@/utils/global-prompt'
 import AIPlugin from './utils/get-ai-plugin'
 import aiViewConfig from './configs/aiView'
 import { getAIResponse } from './utils/get-ai-response'
+import axios from 'axios'
 
 const vsCodeMessage = getWebViewMessageAPI()!
 const DEFAULT_AI_MODEL = 'deepseek-chat'
@@ -357,6 +358,70 @@ export async function config({ ctx, designerRef, pageModel }: any) {
           } else {
             return Promise.reject('错误的连接器类型.')
           }
+        },
+        async uploadFile(params) {
+          let {
+            url,
+            name,
+            filePath,
+            fileName,
+            formData,
+            fail,
+            success,
+            ...others
+          } = params
+
+          /* headers */
+          let headers = {
+            'Content-Type': 'multipart/form-data',
+          }
+
+          let mybricksGlobalHeaders: any =
+            localStorage.getItem('_MYBRICKS_GLOBAL_HEADERS_') || '{"data": {}}'
+          mybricksGlobalHeaders = JSON.parse(mybricksGlobalHeaders)
+
+          headers = {
+            ...mybricksGlobalHeaders?.data,
+            ...headers,
+          }
+
+          /**
+           * 如果 url 不以 http 开头，添加默认域名
+           */
+          if (
+            !/^(http|https):\/\/.*/.test(url) &&
+            pageModel.appConfig.defaultCallServiceHost
+          ) {
+            url = `${pageModel.appConfig.defaultCallServiceHost}${url}`
+          }
+
+          const myFormData = new FormData()
+
+          const response = await fetch(filePath)
+          const blob = await response.blob()
+          const file = new File([blob], name)
+
+          if (fileName) {
+            myFormData.append(name, file, fileName)
+          } else {
+            myFormData.append(name, file)
+          }
+
+          Object.keys(formData).forEach((key) => {
+            myFormData.append(key, formData[key])
+          })
+
+          axios
+            .post(url, myFormData, {
+              headers,
+              ...others,
+            })
+            .then((res) => {
+              success(res)
+            })
+            .catch((err) => {
+              fail(err)
+            })
         },
       },
     },
