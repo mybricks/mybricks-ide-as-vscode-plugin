@@ -87,6 +87,6 @@
   "scripts": {
     "build:webview": "webpack --mode production",
     "watch:webview": "webpack --mode development --watch",
-    "build:vsix": "if not exist unpackage mkdir unpackage && vsce package --out ./unpackage"
+    "build:vsix": "node scripts/ensure-unpackage.js && npm run build:webview && vsce package --out ./unpackage"
   }
 }
