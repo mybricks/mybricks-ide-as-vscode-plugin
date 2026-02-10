@@ -36,6 +36,9 @@ const render = async () => {
   try {
     // 按顺序加载依赖
     await loadScript(
+      'https://f2.eckwai.com/kos/nlav11092/fangzhou/pub/temp/1690444248634.ant-design-icons_4.7.0_min.js',
+    )
+    await loadScript(
       'https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.2/tinymce.min.js',
     )
     await loadScript(
