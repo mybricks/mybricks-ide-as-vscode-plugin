@@ -8,7 +8,7 @@ import { getWebViewMessageAPI } from '@/utils/message'
 import { tabbarModel, EntryPagePath } from '@/stores'
 import servicePlugin from '@mybricks/plugin-connector-http'
 import { editorAppenderFn } from './editorAppender'
-import { MpConfig } from './custom-configs'
+// import { MpConfig } from './custom-configs'
 import globalPrompt from '@/utils/global-prompt'
 import AIPlugin from './utils/get-ai-plugin'
 import aiViewConfig from './configs/aiView'
@@ -60,7 +60,7 @@ export async function config({ ctx, designerRef, pageModel }: any) {
     ],
 
     // 组件库添加器（预留）
-    comLibAdder() {},
+    // comLibAdder() {},
 
     // 组件库加载器
     comLibLoader() {
