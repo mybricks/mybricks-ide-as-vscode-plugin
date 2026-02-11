@@ -3,6 +3,7 @@
  * 配置小程序组件库、存储、页面加载等核心功能
  */
 import { message } from 'antd'
+import { DEFAULT_USER } from '@/constants'
 import { getWebViewMessageAPI } from '@/utils/message'
 import { tabbarModel, EntryPagePath } from '@/stores'
 import servicePlugin from '@mybricks/plugin-connector-http'
@@ -49,15 +50,12 @@ export async function config({ ctx, designerRef, pageModel }: any) {
       }), // HTTP 接口连接器
       AIPlugin({
         key: pageModel?.fileId,
-        user: {
-          // name: appData.user.name || appData.user.email || 'user',
-          // avatar: appData.user.avatar,
-        },
-        requestAsStream: ({ messages, emits, aiRole }) => {
-          return aiViewConfig?.requestAsStream(messages, undefined, emits, {
-            aiRole,
-          })
-        },
+        user: DEFAULT_USER,
+        // requestAsStream: ({ messages, emits, aiRole }) => {
+        //   return aiViewConfig?.requestAsStream(messages, undefined, emits, {
+        //     aiRole,
+        //   })
+        // },
       }),
     ],
 

@@ -1,24 +1,33 @@
 import { SCENE_TEMPLATES } from '@/constants'
-import AIPlugin, { fileFormat } from '@mybricks/plugin-ai'
+import AIPlugin, {
+  fileFormat,
+  createMyBricksAIRequest,
+} from '@mybricks/plugin-ai'
 
-
-export default ({ requestAsStream, user, key }: any) => AIPlugin({
-  requestAsStream,
-  user,
-  prompts: {
-    canvasWidth: '375',
-    systemAppendPrompts: systemAppendPrompts(),
-    prdExamplesPrompts: prdExamplesPrompts(),
-    generatePageActionExamplesPrompts: generatePageActionExamplesPrompts(),
-  },
-  key,
-  createTemplates: {
-    page: SCENE_TEMPLATES.page
-  }
+const requestMybricks = createMyBricksAIRequest({
+  token:
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAbXlicmlja3MuY29tIiwiaWQiOiI3NDI3Mjc5NzI5NDUyOTEyNjQwIiwibmFtZSI6InRlc3Rfc2hvdWxkX2RlbGV0ZSIsInR5cGUiOjEsImlhdCI6MTc3MDgwMTQ3OX0.F5-FnLBzhxyJMDsvx16uUCe0a7COELvLUuGCi7omG8E',
 })
 
+export default ({ user, key }: any) =>
+  AIPlugin({
+    user,
+    prompts: {
+      canvasWidth: '375',
+      systemAppendPrompts: systemAppendPrompts(),
+      prdExamplesPrompts: prdExamplesPrompts(),
+      generatePageActionExamplesPrompts: generatePageActionExamplesPrompts(),
+    },
+    key,
+    createTemplates: {
+      page: SCENE_TEMPLATES.page,
+    },
+    onRequest: (params) => {
+      return requestMybricks(params)
+    },
+  })
 
-function systemAppendPrompts () {
+function systemAppendPrompts() {
   return `
 <对于当前搭建有以下特殊上下文>
 <搭建画布信息>
@@ -52,7 +61,7 @@ function systemAppendPrompts () {
 </对于当前搭建有以下特殊上下文>`
 }
 
-function prdExamplesPrompts () {
+function prdExamplesPrompts() {
   return `
 <example>
 <user_query>根据图片搭建页面</user_query>
@@ -89,7 +98,7 @@ ${fileFormat({
   3. “适合各种活动的场地”为动态内容，注意配置文本字体极小，并且配置溢出能力，避免换行；
   4. 底部居左部分内容宽度缩小后会超过一半，注意将字体调整至极小，避免遮挡右侧内容；
   5. 右侧图标 + 文本横向排列时，注意文本宽度，防止遮挡图标；`,
-  fileName: 'XX页面需求文档.md'
+  fileName: 'XX页面需求文档.md',
 })}
 
 推荐采用以下组件进行搭建：
@@ -108,7 +117,7 @@ ${fileFormat({
     "namespace": "mybricks.somelib.button"
   }
 ]`,
-  fileName: 'XX页面所需要的组件信息.json'
+  fileName: 'XX页面所需要的组件信息.json',
 })}
 </assistant_response>
 </example>`
@@ -141,7 +150,7 @@ function generatePageActionExamplesPrompts() {
     ["u_a2fer", "content", "addChild",{"title":"用户信息","ns":"some.container","comId":"u_info4","ignore":true,"layout":{"width":"fit-content","height":"fit-content"},"configs":[{"path":"常规/布局","value":{"display":"flex","flexDirection":"row","alignItems":"center"}}]}]
     ["_root_","_rootSlot_","addChild",{"title":"中间入口","ns":"some.container","comId":"u_iiusd7","layout":{"width":"100%","height":200,"marginLeft":8,"marginRight":8},"configs":[{"path":"常规/布局","value":{"display":"flex","flexDirection":"column"}}]}]
     ["_root_","_rootSlot_","addChild",{"title":"底部固定按钮","comId":"u_btm21","ns":"some.container","layout":{"width":"100%","height":84,"position":"fixed","bottom":0,"left":0},"configs":[{"path":"常规/布局","value":{"display":"flex"}}]}]`,
-    fileName: '生成个人中心页面操作步骤.json'
+    fileName: '生成个人中心页面操作步骤.json',
   })}
 
   注意：
@@ -165,7 +174,7 @@ function generatePageActionExamplesPrompts() {
     ["_root_",":root","doConfig",{"path":"root/布局","value":{"display":"flex","flexDirection":"column","alignItems":"center"}}]
     ["_root_","_rootSlot_","addChild",{"title":"Flex容器","ns":"some.container","comId":"u_iiusd7","layout":{"width":"100%","height":200,"marginLeft":8,"marginRight":8},"configs":[{"path":"常规/布局","value":{"display":"flex","flexDirection":"row","justifyContent":"space-between","alignItems":"center","flexWrap":"wrap"}}]}]
     ["u_iiusd7","content","addChild",{"title":"导航1","ns":"some.icon","comId":"u_icon1","layout":{"width":120,"height":120,"marginTop":8},"configs":[{"path":"样式/文本","style":{"background":"#0000FF"}}]}]`,
-    fileName: '一行三列导航操作步骤.json'
+    fileName: '一行三列导航操作步骤.json',
   })}
 
 注意：
