@@ -2,7 +2,7 @@
   "name": "mybricks-webview",
   "displayName": "MyBricks.ai",
   "description": "MyBricks.ai 可视化开发平台 - VSCode 集成版，支持小程序、H5 页面可视化搭建",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "publisher": "mybricks",
   "repository": {
     "type": "git",
@@ -51,7 +51,7 @@
     }
   },
   "dependencies": {
-    "@mybricks/to-code-taro": "^1.1.6"
+    "@mybricks/to-code-taro": "^1.1.7"
   },
   "devDependencies": {
     "@ant-design/icons": "^4.7.0",
