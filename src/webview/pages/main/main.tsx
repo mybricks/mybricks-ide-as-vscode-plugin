@@ -42,7 +42,7 @@ const render = async () => {
       'https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.2/tinymce.min.js',
     )
     await loadScript(
-      'https://p4-ec.eckwai.com/kos/nlav12333/mybricks/designer-spa/3.9.894/index.min.js',
+      'https://p4-ec.eckwai.com/kos/nlav12333/mybricks/designer-spa/3.9.901/index.min.js',
     )
     await loadScript(
       'https://p66-ec.becukwai.com/udata/pkg/eshop/myk-dev/plugin2.js',
