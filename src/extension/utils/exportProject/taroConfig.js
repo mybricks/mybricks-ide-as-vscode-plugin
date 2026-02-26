@@ -34,7 +34,7 @@ module.exports = {
       return {
         importInfo: {
           name: importName,
-          from: '@/core/comlib',
+          from: "@mybricks/taro-core",
           type: 'named',
         },
         name: importName,
@@ -51,15 +51,15 @@ module.exports = {
     return {
       importInfo: {
         name: componentName,
-        from: '@/components',
+        from: "@mybricks/taro-components",
         type: 'named',
       },
       name: componentName,
       callName: componentName,
     }
   },
-  getComponentPackageName: () => '@/core/utils/index',
-  getUtilsPackageName: () => '@/core/utils/index',
+  getComponentPackageName: () => "@mybricks/taro-core",
+  getUtilsPackageName: () => "@mybricks/taro-core",
   getPageId: (id) => id,
   getModuleApi: () => ({
     dependencyImport: {

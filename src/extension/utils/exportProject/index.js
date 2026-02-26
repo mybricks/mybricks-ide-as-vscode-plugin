@@ -1,3 +1,4 @@
+const vscode = require('vscode')
 const path = require('path')
 const {
   toCodeTaro,
@@ -7,8 +8,13 @@ const taroConfig = require('./taroConfig')
 const { getWorkspaceFolder } = require('..')
 const generateTaroProject = require('./generateTaroProject')
 
-// 导出路径
-const EXPORT_DIR = ''
+// 调试环境导出到 taro-project 子目录，打包环境保持默认
+function getExportDir(context) {
+  if (context.extensionMode === vscode.ExtensionMode.Development) {
+    return 'taro-project'
+  }
+  return ''
+}
 
 /**
  * 导出
@@ -31,7 +37,7 @@ async function exportProject(context, configJson, rootConfig) {
     )
 
     await generateTaroProject({
-      exportDir: path.join(defaultUri.fsPath, EXPORT_DIR),
+      exportDir: path.join(defaultUri.fsPath, getExportDir(context)),
       projectJson,
       toZip: false,
     })
