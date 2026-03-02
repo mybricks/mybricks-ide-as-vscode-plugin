@@ -3,6 +3,7 @@ const path = require('path')
 const {
   toCodeTaro,
   generateTaroProjectJson,
+  compressImages,
 } = require('@mybricks/to-code-taro')
 const taroConfig = require('./taroConfig')
 const { getWorkspaceFolder } = require('..')
@@ -26,15 +27,18 @@ async function exportProject(context, configJson, rootConfig) {
   })
   const defaultUri = getWorkspaceFolder(context)
   try {
-    const projectJson = generateTaroProjectJson(
-      toCodeTaro(
-        {
-          ...configJson,
-          rootConfig,
-        },
-        taroConfig,
-      ),
+    const result = await toCodeTaro(
+      {
+        ...configJson,
+        rootConfig,
+      },
+      taroConfig,
     )
+    const compressed = await compressImages(result, {
+      png: { compressionLevel: 9, palette: true, effort: 10 },
+      jpeg: { quality: 80 },
+    })
+    const projectJson = generateTaroProjectJson(compressed)
 
     await generateTaroProject({
       exportDir: path.join(defaultUri.fsPath, getExportDir(context)),

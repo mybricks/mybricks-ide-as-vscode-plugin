@@ -102,7 +102,7 @@ export default function Designer() {
       <div className={styles.ide}>
         {/* 顶部工具栏 */}
         <div className={styles.toolbar}>
-          <div className={styles.logo}>低代码</div>
+          <div className={styles.logo}></div>
           <div className={styles.btns} id={'toolbarBtns'} />
           <Space>
             <button
