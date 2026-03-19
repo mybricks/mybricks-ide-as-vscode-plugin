@@ -2,29 +2,57 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "npm: watch:webview",
-      "type": "npm",
-      "script": "watch:webview",
-      "isBackground": true,
+      "label": "build all",
+      "dependsOn": ["build extension", "build webview"],
       "group": {
         "kind": "build",
         "isDefault": true
+      }
+    },
+    {
+      "label": "build extension",
+      "type": "npm",
+      "script": "build:extension",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
       },
-      "problemMatcher": {
-        "owner": "webpack",
-        "fileLocation": "relative",
-        "pattern": {
-          "regexp": "^([^\\s].*)\\s+\\((\\d+,\\d+)\\):\\s+(error|warning|info)\\s+(.*)$",
-          "file": 1,
-          "location": 2,
-          "severity": 3,
-          "message": 4
-        },
-        "background": {
-          "activeOnStart": true,
-          "beginsPattern": "webpack.*compiled",
-          "endsPattern": "webpack.*compiled.*"
-        }
+      "problemMatcher": "$tsc"
+    },
+    {
+      "label": "build webview",
+      "type": "npm",
+      "script": "build:webview",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "watch all",
+      "dependsOn": ["watch extension", "watch webview"],
+      "problemMatcher": "$tsc-watch",
+      "isBackground": true
+    },
+    {
+      "label": "watch extension",
+      "type": "npm",
+      "script": "watch:extension",
+      "isBackground": true,
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      },
+      "problemMatcher": "$tsc-watch"
+    },
+    {
+      "label": "watch webview",
+      "type": "npm",
+      "script": "watch:webview",
+      "isBackground": true,
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
       }
     }
   ]

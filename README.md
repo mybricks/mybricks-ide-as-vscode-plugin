@@ -1,13 +1,6 @@
 # Vibe UI
 
-<div align="center">
-
 **需求即代码、设计即代码**
-
-[![VSCode](https://img.shields.io/badge/VSCode-1.60.0+-007ACC?logo=visual-studio-code)](https://code.visualstudio.com/)
-[![MyBricks](https://img.shields.io/badge/MyBricks-3.9.836-4CAF50)](https://mybricks.world)
-
-</div>
 
 ## 📖 简介
 
