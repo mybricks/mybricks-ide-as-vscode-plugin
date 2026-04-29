@@ -2,7 +2,7 @@
   "name": "mybricks-webview",
   "displayName": "VibeUI",
   "description": "Vibe prototype、Vibe design、Vibe Coding",
-  "version": "0.1.6",
+  "version": "0.1.8",
   "publisher": "mybricks",
   "repository": {
     "type": "git",
@@ -51,7 +51,7 @@
     }
   },
   "dependencies": {
-    "@mybricks/to-code-taro": "^1.2.3"
+    "@mybricks/to-code-taro": "^1.2.9"
   },
   "devDependencies": {
     "@ant-design/icons": "^4.7.0",
